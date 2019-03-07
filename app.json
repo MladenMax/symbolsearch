@@ -24,6 +24,8 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "description": "A simple react native app for monitoring currencies",
+    "githubUrl": "https://github.com/MladenMax/symbolsearch"
   }
 }

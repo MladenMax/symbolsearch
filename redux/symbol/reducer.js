@@ -1,198 +1,135 @@
 import * as TYPES from "./action-types";
 
-export const SymbolState = {
+export const INITITAL_STATE = {
   loading: false,
-  symbols: null,
-  watchlist: null,
-  charts: null,
-  news: null,
-  error: null
+  error: null,
+  symbol: null,
+  chart: null,
+  news: null
 };
 
-// ---------- SYMBOL SEARCH ----------
+// ----- HELPERS -----
 
-export const symbolSearchReducer = (state = SymbolState, { payload, type }) => {
-  switch (type) {
-    case TYPES.SYMBOL_SEARCH_START:
-      return Object.assign({}, state, {
-        loading: true,
-        error: null
-      });
+const updateSymbol = (state, data) => {
+  return Object.assign({}, state.symbol, data);
+}
+// ----- GET SYMBOL -----
 
-    case TYPES.SYMBOL_SEARCH_SUCCESS:
-      return Object.assign({}, state, {
-        loading: false,
-        symbols: payload || null,
-        error: null
-      });
-
-    case TYPES.SYMBOL_SEARCH_ERROR:
-      return Object.assign({}, state, {
-        loading: false,
-        error: payload
-      });
-
-    default:
-      return state;
+const getSymbolInit = state => {
+  const data = {
+      loading: true,
+      error: null
   }
-};
+  return updateSymbol(state, data);
+}
 
-// ---------- GET WATCHLIST ----------
-
-export const getWatchlistReducer = (state = SymbolState, { payload, type }) => {
-  switch (type) {
-    case TYPES.GET_WATCHLIST_START:
-      return Object.assign({}, state, {
-        loading: true,
-        error: null
-      });
-
-    case TYPES.GET_WATCHLIST_SUCCESS:
-      return Object.assign({}, state, {
-        loading: false,
-        watchlist: payload || null,
-        error: null
-      });
-
-    case TYPES.GET_WATCHLIST_ERROR:
-      return Object.assign({}, state, {
-        loading: false,
-        error: payload
-      });
-
-    default:
-      return state;
+const getSymbolError = (state, error) => {
+  const data = {
+      loading: false,
+      error
   }
-};
+  return updateSymbol(state, data);
+}
 
-// ---------- ADD SYMBOL TO WATCHLIST ----------
-
-export const addSymbolToWatchlistReducer = (
-  state = SymbolState,
-  { payload, type }
-) => {
-  switch (type) {
-    case TYPES.ADD_SYMBOL_TO_WATCHLIST_START:
-      return Object.assign({}, state, {
-        loading: true,
-        error: null
-      });
-
-    case TYPES.ADD_SYMBOL_TO_WATCHLIST_SUCCESS:
-      return Object.assign({}, state, {
-        loading: false,
-        watchlist: [...state.watchlist, payload],
-        error: null
-      });
-
-    case TYPES.ADD_SYMBOL_TO_WATCHLIST_ERROR:
-      return Object.assign({}, state, {
-        loading: false,
-        error: payload
-      });
-
-    default:
-      return state;
+const getSymbolEnd = (state, symbol) => {
+  const data = {
+      loading: false,
+      symbol
   }
-};
+  return updateSymbol(state, data);
+}
 
-// ---------- REMOVE SYMBOL FROM WATCHLIST ----------
+// ----- GET CHART -----
 
-export const removeSymbolFromWatchlistReducer = (
-  state = SymbolState,
-  { payload, type }
-) => {
-  switch (type) {
-    case TYPES.REMOVE_SYMBOL_FROM_WATCHLIST_START:
-      return Object.assign({}, state, {
-        loading: true,
-        error: null
-      });
-
-    case TYPES.REMOVE_SYMBOL_FROM_WATCHLIST_SUCCESS:
-      return Object.assign({}, state, {
-        loading: false,
-        watchlist: state.watchlist.filter(symbol => {
-          return symbol.id !== payload.id;
-        }),
-        error: null
-      });
-
-    case TYPES.REMOVE_SYMBOL_FROM_WATCHLIST_ERROR:
-      return Object.assign({}, state, {
-        loading: false,
-        error: payload
-      });
-
-    default:
-      return state;
+const getChartInit = state => {
+  const data = {
+      loading: true,
+      error: null
   }
-};
+  return updateSymbol(state, data);
+}
 
-// ---------- SYMBOL CHARTS ----------
-
-export const getSymbolChartsReducer = (
-  state = SymbolState,
-  { payload, type }
-) => {
-  switch (type) {
-    case TYPES.GET_SYMBOL_CHARTS_START:
-      return Object.assign({}, state, {
-        loading: true,
-        error: null
-      });
-
-    case TYPES.GET_SYMBOL_CHARTS_SUCCESS:
-      return Object.assign({}, state, {
-        loading: false,
-        charts: payload || null,
-        error: null
-      });
-
-    case TYPES.GET_SYMBOL_CHARTS_ERROR:
-      return Object.assign({}, state, {
-        loading: false,
-        error: payload
-      });
-
-    default:
-      return state;
+const getChartError = (state, error) => {
+  const data = {
+      loading: false,
+      error
   }
-};
+  return updateSymbol(state, data);
+}
 
-// ---------- SYMBOL NEWS ----------
-
-export const getSymbolNewsReducer = (
-  state = SymbolState,
-  { payload, type }
-) => {
-  switch (type) {
-    case TYPES.GET_SYMBOL_NEWS_START:
-      return Object.assign({}, state, {
-        loading: true,
-        error: null
-      });
-
-    case TYPES.GET_SYMBOL_NEWS_SUCCESS:
-      return Object.assign({}, state, {
-        loading: false,
-        news: payload || null,
-        error: null
-      });
-
-    case TYPES.GET_SYMBOL_NEWS_ERROR:
-      return Object.assign({}, state, {
-        loading: false,
-        error: payload
-      });
-      
-    case TYPES.INVALIDATE_NEWS:
-      return Object.assign({}, state, {
-        loading: false,
-        news: null,
-        error: null
-      });
-    default:
-      return state;
+const getChartEnd = (state, chart) => {
+  const data = {
+      loading: false,
+      chart
   }
-};
+  return updateSymbol(state, data);
+}
+
+// ----- GET NEWS -----
+
+const getNewsInit = state => {
+  const data = {
+      loading: true,
+      error: null
+  }
+  return updateSymbol(state, data);
+}
+
+const getNewsError = (state, error) => {
+  const data = {
+      loading: false,
+      error
+  }
+  return updateSymbol(state, data);
+}
+
+const getNewsEnd = (state, news) => {
+  const data = {
+      loading: false,
+      news
+  }
+  return updateSymbol(state, data);
+}
+
+// ----- SYMBOL REDUCER -----
+
+export const symbolReducer = (state = INITIAL_STATE, action) => {
+
+  if (action.type === TYPES.GET_SYMBOL_INIT) {
+      return getSymbolInit(state);
+  }
+
+  if (action.type === TYPES.GET_SYMBOL_ERROR) {
+      return getSymbolError(state, action.error);
+  }
+
+  if (action.type === TYPES.GET_SYMBOL_END) {
+      return getSymbolEnd(state, action.symbol);
+  }
+
+  if (action.type === TYPES.GET_CHART_INIT) {
+      return getChartInit(state);
+  }
+
+  if (action.type === TYPES.GET_CHART_ERROR) {
+      return getChartError(state, action.error);
+  }
+
+  if (action.type === TYPES.GET_CHART_END) {
+      return getChartEnd(state, action.chart);
+  }
+
+  if (action.type === TYPES.GET_NEWS_INIT) {
+      return getNewsInit(state);
+  }
+
+  if (action.type === TYPES.GET_NEWS_ERROR) {
+      return getNewsError(state, action.error);
+  }
+
+  if (action.type === TYPES.GET_NEWS_END) {
+      return getNewsEnd(state, action.news);
+  }
+
+  return state;
+}

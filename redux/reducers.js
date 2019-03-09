@@ -1,13 +1,13 @@
 import { combineReducers } from "redux";
 
-import { authReducer } from "./auth";
-import { userRootReducer } from "./user";
-import { symbolRootReducer } from "./symbol";
+import { userReducer } from "./user";
+import { searchReducer } from "./search";
+import { symbolReducer } from "./symbol";
 
 const rootReducer = combineReducers({
-  auth: authReducer,
-  user: userRootReducer,
-  symbol: symbolRootReducer
+  user: userReducer,
+  search: searchReducer,
+  symbol: symbolReducer
 });
 
 export default rootReducer;

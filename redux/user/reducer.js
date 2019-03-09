@@ -1,64 +1,141 @@
-import * as TYPES from "./action-types";
+import * as TYPES from './types';
 
-export const UserState = {
-  loading: false,
-  userId: null,
-  accountId: null,
-  error: null
+const INITIAL_STATE = {
+    loading: false,
+    error: null,
+    access_token: null,
+    user_id: null,
+    account_id: null,
+    authenticated: false
 };
 
-// ---------- USER INFO ----------
+// ----- HELPER -----
 
-export const userInfoReducer = (state = UserState, { payload, type }) => {
-  switch (type) {
-    case TYPES.GET_USER_INFO_START:
-      return Object.assign({}, state, {
+const updateUser = (state, data) => {
+    return Object.assign({}, state.user, data);
+}
+
+// ----- AUTH USER -----
+
+const authUserInit = state => {
+    const data = {
         loading: true,
         error: null
-      });
+    }
+    return updateUser(state, data);
+}
 
-    case TYPES.GET_USER_INFO_SUCCESS:
-      return Object.assign({}, state, {
+const authUserError = (state, error) => {
+    const data = {
         loading: false,
-        userId: payload || null,
-        error: null
-      });
+        authenticated: false,
+        error
+    }
+    return updateUser(state, data);
+}
 
-    case TYPES.GET_USER_INFO_ERROR:
-      return Object.assign({}, state, {
-        loading: false,
-        error: payload
-      });
+const authUserEnd = (state, access_token) => {
+    const data = {
+        loading: false,,
+        access_token
+    }
+    return updateUser(state, data);
+}
 
-    default:
-      return state;
-  }
-};
+// ----- GET USER -----
 
-// ---------- USER ACCOUNTS ----------
-
-export const userAccountsReducer = (state = UserState, { payload, type }) => {
-  switch (type) {
-    case TYPES.GET_USER_ACCOUNTS_START:
-      return Object.assign({}, state, {
+const getUserInit = state => {
+    const data = {
         loading: true,
         error: null
-      });
+    }
+    return updateUser(state, data);
+}
 
-    case TYPES.GET_USER_ACCOUNTS_SUCCESS:
-      return Object.assign({}, state, {
+const getUserError = (state, error) => {
+    const data = {
         loading: false,
-        accountId: payload || null,
+        authenticated: false,
+        error
+    }
+    return updateUser(state, data);
+}
+
+const getUserEnd = (state, user_id) => {
+    const data = {
+        loading: false,
+        user_id
+    }
+    return updateUser(state, data);
+}
+
+// ----- GET ACCOUNT -----
+
+const getAccountInit = state => {
+    const data = {
+        loading: true,
         error: null
-      });
+    }
+    return updateUser(state, data);
+}
 
-    case TYPES.GET_USER_ACCOUNTS_ERROR:
-      return Object.assign({}, state, {
+const getAccountError = (state, error) => {
+    const data = {
         loading: false,
-        error: payload
-      });
+        authenticated: false,
+        error
+    }
+    return updateUser(state, data);
+}
 
-    default:
-      return state;
-  }
-};
+const getAccountEnd = (state, account_id) => {
+    const data = {
+        loading: false,
+        authenticated: true,
+        account_id
+    }
+    return updateUser(state, data);
+}
+
+// ----- USER REDUCER -----
+
+export const userReducer = (state = INITIAL_STATE, action) => {
+
+    if (action.type === TYPES.AUTH_USER_INIT) {
+        return authUserInit(state);
+    }
+
+    if (action.type === TYPES.AUTH_USER_ERROR) {
+        return authUserError(state, action.error);
+    }
+
+    if (action.type === TYPES.AUTH_USER_END) {
+        return authUserEnd(state, action.access_token);
+    }
+
+    if (action.type === TYPES.GET_USER_INIT) {
+        return getUserInit(state);
+    }
+
+    if (action.type === TYPES.GET_USER_ERROR) {
+        return getUserError(state, action.error);
+    }
+
+    if (action.type === TYPES.GET_USER_END) {
+        return getUserEnd(state, action.user_id);
+    }
+
+    if (action.type === TYPES.GET_ACCOUNT_INIT) {
+        return getAccountInit(state);
+    }
+
+    if (action.type === TYPES.GET_ACCOUNT_ERROR) {
+        return getAccountError(state, action.error);
+    }
+
+    if (action.type === TYPES.GET_ACCOUNT_END) {
+        return getAccountEnd(state, action.account_id);
+    }
+
+    return state;
+}

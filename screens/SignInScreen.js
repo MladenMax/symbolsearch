@@ -15,13 +15,8 @@ class SignInScreen extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.authenticated) {
-      this.props.getUserInfo();
       this.props.navigation.navigate("Tabs");
     }
-  }
-
-  componentWillUnmount() {
-    this.props.getUserAccounts();
   }
 
   render() {
@@ -39,12 +34,7 @@ const mapStateToProps = state => ({
   authenticated: state.auth.authenticated
 });
 
-const mapDispatchToProps = dispatch => ({
-  getUserInfo: () => dispatch(getUserInfo()),
-  getUserAccounts: () => dispatch(getUserAccounts())
-});
-
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  null
 )(SignInScreen);

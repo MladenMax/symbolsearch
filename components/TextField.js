@@ -10,7 +10,7 @@ class TextField extends Component {
     label: PropTypes.string.isRequired,
     type: PropTypes.string,
     onChange: PropTypes.func,
-    errMsg: PropTypes.string
+    errorMessage: PropTypes.string
   };
 
   constructor(props) {
@@ -32,7 +32,7 @@ class TextField extends Component {
 
   render() {
     const { container, input, text } = styles;
-    const { label, type, errMsg } = this.props;
+    const { label, type, errorMessage } = this.props;
     const secure = type === TYPES.password ? true : false;
     return (
       <View style={container}>
@@ -42,9 +42,9 @@ class TextField extends Component {
           secureTextEntry={secure}
           onChangeText={val => this.onChange(val)}
           style={input}
-          error={!!errMsg}
+          error={!!errorMessage}
         />
-        {!!errMsg && <Text style={text}>{errMsg}</Text>}
+        {!!errorMessage && <Text style={text}>{errorMessage}</Text>}
       </View>
     );
   }

@@ -1,100 +1,135 @@
 import * as TYPES from "./action-types";
-import { get } from "../../lib/http";
+import { get, post } from "../../lib/http";
 
-import { setItem, getItem } from "../../lib/deviceStorage";
+import { getItem, setItem } from "../../lib/deviceStorage";
 
-// ---------- USER INFO ----------
+// ----- AUTH USER -----
 
-export const getUserInfoStart = () => {
-  return {
-    type: TYPES.GET_USER_INFO_START
-  };
-};
+const authUserInit = () => {
+	return {
+		type: TYPES.AUTH_USER_INIT
+	}
+}
 
-export const getUserInfoError = error => {
-  return dispatch => {
-    dispatch({
-      type: TYPES.GET_USER_INFO_ERROR,
-      payload: error
-    });
-  };
-};
+const authUserError = error => {
+	return {
+		type: TYPES.AUTH_USER_ERROR,
+		error
+	}
+}
 
-export const getUserInfoSuccess = result => {
-  return dispatch => {
-    dispatch({
-      type: TYPES.GET_USER_INFO_SUCCESS,
-      payload: result
-    });
-  };
-};
+const authUserEnd = access_token => {
+	return {
+		type: TYPES.AUTH_USER_END,
+		access_token
+	}
+}
 
-export const getUserInfo = () => {
-  return dispatch => {
-    dispatch(getUserInfoStart());
-    return get("/users/me", null)
-      .then(res => {
-        return setItem("user_id", res.id)
-          .then(() => {
-            return dispatch(getUserInfoSuccess(res.id));
-          })
-          .catch(err => {
-            throw err;
-          });
-      })
-      .catch(err => {
-        return dispatch(getUserInfoError(err));
-      });
-  };
-};
+export const authUser = (username, password) => {
+	return dispatch => {
+		dispatch(authUserInit());
+		return post("oauth/token", null, { username, password }, true)
+			.then(res => {
+				return setItem("access_token", res.access_token)
+					.then(() => {
+						dispatch(authUserEnd(res.access_token));
+						return dispatch(getUser());
+					})
+					.catch(error => {
+						throw error;
+					});
+			})
+			.catch(error => {
+				return dispatch(authUserError(error));
+			});
+	};
+}
 
-// ---------- USER ACCOUNTS ----------
+// ----- GET USER -----
 
-export const getUserAccountsStart = () => {
-  return {
-    type: TYPES.GET_USER_ACCOUNTS_START
-  };
-};
+const getUserInit = () => {
+	return {
+		type: TYPES.GET_USER_INIT
+	}
+}
 
-export const getUserAccountsError = error => {
-  return dispatch => {
-    dispatch({
-      type: TYPES.GET_USER_ACCOUNTS_ERROR,
-      payload: error
-    });
-  };
-};
+const getUserError = error => {
+	return {
+		type: TYPES.GET_USER_ERROR,
+		error
+	}
+}
 
-export const getUserAccountsSuccess = result => {
-  return dispatch => {
-    dispatch({
-      type: TYPES.GET_USER_ACCOUNTS_SUCCESS,
-      payload: result
-    });
-  };
-};
+const getUserEnd = user_id => {
+	return {
+		type: TYPES.GET_USER_END,
+		user_id
+	}
+}
 
-export const getUserAccounts = () => {
-  return dispatch => {
-    dispatch(getUserAccountsStart());
-    return getItem("user_id")
-      .then(userId => {
-        return get(`/users/${userId}/accounts`, null)
-          .then(res => {
-            return setItem("account_id", res[0].id)
-              .then(() => {
-                return dispatch(getUserAccountsSuccess(res[0].id));
-              })
-              .catch(err => {
-                throw err;
-              });
-          })
-          .catch(err => {
-            return dispatch(getUserAccountsError(err));
-          });
-      })
-      .catch(err => {
-        throw err;
-      });
-  };
-};
+export const getWatchlist = () => {
+	return dispatch => {
+		dispatch(getUserInit());
+		return get("/users/me", null)
+			.then(res => {
+				return setItem("user_id", res.id)
+					.then(() => {
+						dispatch(getUserEnd(res.id));
+						return dispatch(getAccount());
+					})
+					.catch(error => {
+						throw error;
+					});
+			})
+			.catch(error => {
+				return dispatch(getUserError(error));
+			});
+	};
+}
+
+// ----- GET ACCOUNT -----
+
+const getAccountInit = () => {
+	return {
+		type: TYPES.GET_ACCOUNT_INIT
+	}
+}
+
+const getAccountError = error => {
+	return {
+		type: TYPES.GET_ACCOUNT_ERROR,
+		error
+	}
+}
+
+const getAccountEnd = account_id => {
+	return {
+		type: TYPES.GET_ACCOUNT_END,
+		account_id
+	}
+}
+
+export const getAccount = () => {
+	return dispatch => {
+		dispatch(getAccountInit());
+		return getItem("user_id")
+			.then(userId => {
+				return get(`/users/${userId}/accounts`, null)
+					.then(res => {
+						return setItem("account_id", res[0].id)
+							.then(() => {
+								return dispatch(getAccountEnd(res[0].id));
+							})
+							.catch(error => {
+								throw error;
+							});
+					})
+					.catch(error => {
+						return dispatch(getAccountError(error));
+					});
+			})
+			.catch(error => {
+				throw error;
+			});
+	};
+}

@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 
 import { validateEmail, validatePassword } from "../lib/validation";
 
-import { signIn } from "../redux/auth/actions";
+import { authUser } from "../redux/user/actions";
 
 import TextField from "./TextField";
 
@@ -23,8 +23,8 @@ class SignInForm extends Component {
     this.state = {
       email: "",
       password: "",
-      emailMsg: "",
-      passwordMsg: ""
+      emailMessage: "",
+      passwordMessage: ""
     };
   }
   
@@ -32,21 +32,21 @@ class SignInForm extends Component {
     const { email, password } = this.state;
     const formValid = this.validate();
     if (formValid) {
-      this.props.signIn(email, password);
+      this.props.authUser(email, password);
     }
   };
 
   validate = () => {
     const { email, password } = this.state;
-    const emailMsg = validateEmail(email);
-    const passwordMsg = validatePassword(password);
+    const emailMessage = validateEmail(email);
+    const passwordMessage = validatePassword(password);
 
     this.setState({
-      emailMsg,
-      passwordMsg
+      emailMessage,
+      passwordMessage
     });
 
-    if (!!emailMsg || !!passwordMsg) {
+    if (!!emailMessage || !!passwordMessage) {
       return false;
     }
 
@@ -55,7 +55,7 @@ class SignInForm extends Component {
 
   render() {
     const { loading, error } = this.props;
-    const { emailMsg, passwordMsg } = this.state;
+    const { emailMessage, passwordMessage } = this.state;
     const { container, errorText, fields, button, buttonContent } = styles;
     return (
       <View style={container}>
@@ -64,14 +64,14 @@ class SignInForm extends Component {
             type="text"
             label="Email"
             onChange={val => this.setState({ email: val })}
-            errMsg={emailMsg}
+            errorMessage={emailMessage}
           />
 
           <TextField
             type="password"
             label="Password"
             onChange={val => this.setState({ password: val })}
-            errMsg={passwordMsg}
+            errorMessage={passwordMessage}
           />
         </View>
 
@@ -92,12 +92,12 @@ class SignInForm extends Component {
 }
 
 const mapStateToProps = state => ({
-  loading: state.auth.loading,
-  error: state.auth.error
+  loading: state.user.loading,
+  error: state.user.error
 });
 
 const mapDispatchToProps = dispatch => ({
-  signIn: (username, password) => dispatch(signIn(username, password))
+  authUser: (username, password) => dispatch(authUser(username, password))
 });
 
 export default connect(

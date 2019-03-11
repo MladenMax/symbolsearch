@@ -21,8 +21,8 @@ class SignInForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "mladen.maximovic@gmail.com",
-      password: "Qwer1234",
+      email: "",
+      password: "",
       emailMessage: "",
       passwordMessage: ""
     };

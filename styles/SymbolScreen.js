@@ -3,6 +3,17 @@ import { StyleSheet, Dimensions } from "react-native";
 const width = Dimensions.get("window").width;
 
 export const styles = StyleSheet.create({
+  symbolSpinner: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignSelf: "center",
+    color: "#009688"
+  },
+  showMoreSpinner: {
+    padding: 20,
+    alignSelf: 'center',
+    color: "#009688"
+  },
   container: {
     flex: 1,
     alignItems: "center"
@@ -21,7 +32,7 @@ export const styles = StyleSheet.create({
   },
   content: {
     justifyContent: "center",
-    alignSelf: "center",
+    alignItems: "center",
     padding: 20
   },
   subTitle: {
@@ -33,13 +44,14 @@ export const styles = StyleSheet.create({
   descriptionText: {
     color: "#999999"
   },
-  news: {
-    width: width
+  newsContainer: {
+    width: width - 40,
   },
   newsTitle: {
     marginTop: 10
   },
   newsDate: {
+    paddingBottom: 5,
     color: "#999999"
   },
   showMore: {
@@ -47,5 +59,5 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
     fontWeight: "bold",
     color: "#009688",
-  }
+  },
 });

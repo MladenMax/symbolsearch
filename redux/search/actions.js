@@ -1,7 +1,6 @@
-import * as TYPES from "./action-types";
+import * as TYPES from "./types";
+import { getItem } from "../../util/deviceStorage";
 import { get, put } from "../../lib/http";
-
-import { getItem } from "../../lib/deviceStorage";
 
 // ----- GET SYMBOLS -----
 
@@ -115,10 +114,10 @@ const updateWatchlistError = error => {
 	}
 }
 
-const updateWatchlistEnd = () => {
+const updateWatchlistEnd = updated_watchlist => {
 	return {
 		type: TYPES.UPDATE_WATCHLIST_END,
-		updated_watchlist: true
+		updated_watchlist
 	}
 }
 
@@ -129,7 +128,7 @@ export const updateWatchlist = (symbolId, following) => {
 			.then(accountId => {
 				return put(`/accounts/${accountId}/watchlist/${symbolId}`, null, { following })
 					.then(() => {
-						dispatch(updateWatchlistEnd(watchlist));
+						dispatch(updateWatchlistEnd(true));
 						return dispatch(getWatchlist());
 					})
 					.catch(error => {

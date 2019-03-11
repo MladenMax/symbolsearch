@@ -6,13 +6,13 @@ const INITIAL_STATE = {
     access_token: null,
     user_id: null,
     account_id: null,
-    authenticated: false
+    authenticated: false,
 };
 
 // ----- HELPER -----
 
-const updateUser = (state, data) => {
-    return Object.assign({}, state.user, data);
+const updateAuth = (state, data) => {
+    return Object.assign({}, state, data);
 }
 
 // ----- AUTH USER -----
@@ -22,7 +22,7 @@ const authUserInit = state => {
         loading: true,
         error: null
     }
-    return updateUser(state, data);
+    return updateAuth(state, data);
 }
 
 const authUserError = (state, error) => {
@@ -31,25 +31,23 @@ const authUserError = (state, error) => {
         authenticated: false,
         error
     }
-    return updateUser(state, data);
+    return updateAuth(state, data);
 }
 
 const authUserEnd = (state, access_token) => {
     const data = {
-        loading: false,,
         access_token
     }
-    return updateUser(state, data);
+    return updateAuth(state, data);
 }
 
 // ----- GET USER -----
 
 const getUserInit = state => {
     const data = {
-        loading: true,
         error: null
     }
-    return updateUser(state, data);
+    return updateAuth(state, data);
 }
 
 const getUserError = (state, error) => {
@@ -58,25 +56,23 @@ const getUserError = (state, error) => {
         authenticated: false,
         error
     }
-    return updateUser(state, data);
+    return updateAuth(state, data);
 }
 
 const getUserEnd = (state, user_id) => {
     const data = {
-        loading: false,
         user_id
     }
-    return updateUser(state, data);
+    return updateAuth(state, data);
 }
 
 // ----- GET ACCOUNT -----
 
 const getAccountInit = state => {
     const data = {
-        loading: true,
         error: null
     }
-    return updateUser(state, data);
+    return updateAuth(state, data);
 }
 
 const getAccountError = (state, error) => {
@@ -85,7 +81,7 @@ const getAccountError = (state, error) => {
         authenticated: false,
         error
     }
-    return updateUser(state, data);
+    return updateAuth(state, data);
 }
 
 const getAccountEnd = (state, account_id) => {
@@ -94,12 +90,12 @@ const getAccountEnd = (state, account_id) => {
         authenticated: true,
         account_id
     }
-    return updateUser(state, data);
+    return updateAuth(state, data);
 }
 
-// ----- USER REDUCER -----
+// ----- AUTH REDUCER -----
 
-export const userReducer = (state = INITIAL_STATE, action) => {
+export const authReducer = (state = INITIAL_STATE, action) => {
 
     if (action.type === TYPES.AUTH_USER_INIT) {
         return authUserInit(state);

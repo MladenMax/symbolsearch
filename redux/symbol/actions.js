@@ -1,8 +1,7 @@
-import * as TYPES from "./action-types";
-import { get, put } from "../../lib/http";
-
-import { getItem } from "../../lib/deviceStorage";
+import * as TYPES from "./types";
 import { apiConfig } from "../../config/api";
+import { getItem } from "../../util/deviceStorage";
+import { get } from "../../lib/http";
 
 // ----- GET SYMBOL -----
 
@@ -19,10 +18,10 @@ const getSymbolError = error => {
 	}
 }
 
-const getSymbolEnd = symbols => {
+const getSymbolEnd = symbol => {
 	return {
 		type: TYPES.GET_SYMBOL_END,
-		symbols
+		symbol
 	}
 }
 
@@ -33,16 +32,14 @@ export const getSymbol = symbolId => {
 			.then(userId => {
 				return get(`/users/${userId}/symbols/${symbolId}`, null)
 					.then(res => {
-						const symbol = res.map(symbol => {
-							return {
-								id: symbol.id,
-								name: symbol.displayName,
-								price: symbol.price,
-								description: symbol.baseInstruments.description
-							};
-						});
+						const symbol = {
+							id: res.id,
+							name: res.displayName,
+							price: res.price,
+							description: res.baseInstrument.description.trim()
+						};
 						dispatch(getSymbolEnd(symbol));
-						return dispatch(getCharts());
+						return dispatch(getCharts(symbolId));
 					})
 					.catch(error => {
 						return dispatch(getSymbolError(error));
@@ -58,13 +55,13 @@ export const getSymbol = symbolId => {
 
 const getChartsInit = () => {
 	return {
-		type: TYPES.GET_CHART_INIT
+		type: TYPES.GET_CHARTS_INIT
 	}
 }
 
 const getChartsError = error => {
 	return {
-		type: TYPES.GET_CHART_ERROR,
+		type: TYPES.GET_CHARTS_ERROR,
 		error
 	}
 }
@@ -76,7 +73,7 @@ const getChartsEnd = charts => {
 	}
 }
 
-export const getCharts = () => {
+export const getCharts = symbolId => {
 	return dispatch => {
 		dispatch(getChartsInit());
 		return getItem("user_id")
@@ -89,8 +86,8 @@ export const getCharts = () => {
 								low: chart.low
 							};
 						});
-						return dispatch(getChartsEnd(watchlist));
-						return dispatch()
+						dispatch(getChartsEnd(charts));
+						return dispatch(getNews(5, 0, symbolId))
 					})
 					.catch(error => {
 						return dispatch(getChartsError(error));
@@ -127,13 +124,13 @@ const getNewsEnd = news => {
 export const getNews = (limit, offset, tag) => {
 	return dispatch => {
 		dispatch(getNewsInit());
-		return put(`applications/${apiConfig.applicationId}/news/coinpulse`, {
+		return get(`applications/${apiConfig.applicationId}/news/coinpulse`, {
 			limit,
 			offset,
 			tag
 		})
-			.then(() => {
-				return dispatch(getNewsEnd());
+			.then(res => {
+				return dispatch(getNewsEnd(res.results));
 			})
 			.catch(error => {
 				return dispatch(getNewsError(error));

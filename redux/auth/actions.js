@@ -1,7 +1,6 @@
-import * as TYPES from "./action-types";
+import * as TYPES from "./types";
+import { getItem, setItem } from "../../util/deviceStorage";
 import { get, post } from "../../lib/http";
-
-import { getItem, setItem } from "../../lib/deviceStorage";
 
 // ----- AUTH USER -----
 
@@ -67,7 +66,7 @@ const getUserEnd = user_id => {
 	}
 }
 
-export const getWatchlist = () => {
+export const getUser = () => {
 	return dispatch => {
 		dispatch(getUserInit());
 		return get("/users/me", null)

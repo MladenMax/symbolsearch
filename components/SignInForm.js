@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 
 import { validateEmail, validatePassword } from "../lib/validation";
 
-import { authUser } from "../redux/user/actions";
+import { authUser } from "../redux/auth/actions";
 
 import TextField from "./TextField";
 
@@ -21,23 +21,22 @@ class SignInForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
-      password: "",
+      email: "mladen.maximovic@gmail.com",
+      password: "Qwer1234",
       emailMessage: "",
       passwordMessage: ""
     };
   }
-  
+
   submit = () => {
     const { email, password } = this.state;
-    const formValid = this.validate();
+    const formValid = this.validate(email, password);
     if (formValid) {
       this.props.authUser(email, password);
     }
   };
 
-  validate = () => {
-    const { email, password } = this.state;
+  validate = (email, password) => {
     const emailMessage = validateEmail(email);
     const passwordMessage = validatePassword(password);
 
@@ -92,8 +91,8 @@ class SignInForm extends Component {
 }
 
 const mapStateToProps = state => ({
-  loading: state.user.loading,
-  error: state.user.error
+  loading: state.auth.loading,
+  error: state.auth.error
 });
 
 const mapDispatchToProps = dispatch => ({

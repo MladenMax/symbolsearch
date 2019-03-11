@@ -1,66 +1,60 @@
-import * as TYPES from "./action-types";
+import * as TYPES from "./types";
 
-export const INITITAL_STATE = {
+const INITITAL_STATE = {
   loading: false,
   error: null,
   symbol: null,
-  chart: null,
+  charts: null,
   news: null
 };
 
 // ----- HELPERS -----
 
 const updateSymbol = (state, data) => {
-  return Object.assign({}, state.symbol, data);
+  return Object.assign({}, state, data);
 }
 // ----- GET SYMBOL -----
 
 const getSymbolInit = state => {
   const data = {
-      loading: true,
-      error: null
+    error: null
   }
   return updateSymbol(state, data);
 }
 
 const getSymbolError = (state, error) => {
   const data = {
-      loading: false,
-      error
+    error
   }
   return updateSymbol(state, data);
 }
 
 const getSymbolEnd = (state, symbol) => {
   const data = {
-      loading: false,
-      symbol
+    symbol
   }
   return updateSymbol(state, data);
 }
 
-// ----- GET CHART -----
+// ----- GET CHARTS -----
 
-const getChartInit = state => {
+const getChartsInit = state => {
   const data = {
-      loading: true,
-      error: null
+    error: null
   }
   return updateSymbol(state, data);
 }
 
-const getChartError = (state, error) => {
+const getChartsError = (state, error) => {
   const data = {
-      loading: false,
-      error
+    error
   }
   return updateSymbol(state, data);
 }
 
-const getChartEnd = (state, chart) => {
+const getChartsEnd = (state, charts) => {
   const data = {
-      loading: false,
-      chart
+    charts
   }
   return updateSymbol(state, data);
 }
@@ -69,66 +63,66 @@ const getChartEnd = (state, chart) => {
 
 const getNewsInit = state => {
   const data = {
-      loading: true,
-      error: null
+    loading: true,
+    error: null
   }
   return updateSymbol(state, data);
 }
 
 const getNewsError = (state, error) => {
   const data = {
-      loading: false,
-      error
+    loading: false,
+    error
   }
   return updateSymbol(state, data);
 }
 
 const getNewsEnd = (state, news) => {
   const data = {
-      loading: false,
-      news
+    loading: false,
+    news
   }
   return updateSymbol(state, data);
 }
 
 // ----- SYMBOL REDUCER -----
 
-export const symbolReducer = (state = INITIAL_STATE, action) => {
+export const symbolReducer = (state = INITITAL_STATE, action) => {
 
   if (action.type === TYPES.GET_SYMBOL_INIT) {
-      return getSymbolInit(state);
+    return getSymbolInit(state);
   }
 
   if (action.type === TYPES.GET_SYMBOL_ERROR) {
-      return getSymbolError(state, action.error);
+    return getSymbolError(state, action.error);
   }
 
   if (action.type === TYPES.GET_SYMBOL_END) {
-      return getSymbolEnd(state, action.symbol);
+    return getSymbolEnd(state, action.symbol);
   }
 
-  if (action.type === TYPES.GET_CHART_INIT) {
-      return getChartInit(state);
+  if (action.type === TYPES.GET_CHARTS_INIT) {
+    return getChartsInit(state);
   }
 
-  if (action.type === TYPES.GET_CHART_ERROR) {
-      return getChartError(state, action.error);
+  if (action.type === TYPES.GET_CHARTS_ERROR) {
+    return getChartsError(state, action.error);
   }
 
-  if (action.type === TYPES.GET_CHART_END) {
-      return getChartEnd(state, action.chart);
+  if (action.type === TYPES.GET_CHARTS_END) {
+    return getChartsEnd(state, action.charts);
   }
 
   if (action.type === TYPES.GET_NEWS_INIT) {
-      return getNewsInit(state);
+    return getNewsInit(state);
   }
 
   if (action.type === TYPES.GET_NEWS_ERROR) {
-      return getNewsError(state, action.error);
+    return getNewsError(state, action.error);
   }
 
   if (action.type === TYPES.GET_NEWS_END) {
-      return getNewsEnd(state, action.news);
+    return getNewsEnd(state, action.news);
   }
 
   return state;

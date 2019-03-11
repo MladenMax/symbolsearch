@@ -11,7 +11,7 @@ const INITIAL_STATE = {
 // ----- HELPER -----
 
 const updateSearch = (state, data) => {
-    return Object.assign({}, state.search, data);
+    return Object.assign({}, state, data);
 
 }
 
@@ -35,7 +35,6 @@ const getSymbolsError = (state, error) => {
 
 const getSymbolsEnd = (state, symbols) => {
     const data = {
-        loading: false,
         symbols
     }
     return updateSearch(state, data);
@@ -45,7 +44,6 @@ const getSymbolsEnd = (state, symbols) => {
 
 const getWatchlistInit = state => {
     const data = {
-        loading: true,
         error: null
     }
     return updateSearch(state, data);
@@ -87,9 +85,8 @@ const updateWatchlistError = (state, error) => {
 
 const updateWatchlistEnd = (state, updated_watchlist) => {
     const data = {
-        loading: false,
         updated_watchlist
-    }
+    };
     return updateSearch(state, data);
 }
 

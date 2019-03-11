@@ -13,12 +13,8 @@ import {
 
 import DataRow from "../components/DataRow";
 
-import {
-  symbolSearch,
-  getWatchlist,
-  addSymbolToWatchlist,
-  removeSymbolFromWatchlist
-} from "../redux/symbol/actions";
+import { getSymbols, updateWatchlist } from "../redux/search/actions";
+import { getSymbol } from "../redux/symbol/actions.js";
 
 import { styles } from "../styles/MainScreen";
 
@@ -28,44 +24,22 @@ class SearchScreen extends Component {
 
     this.state = {
       query: "",
-      symbols: null,
       filtered: null,
-      watchlist: {},
       showSnackbar: false,
       snackbarMsg: ""
     };
   }
 
   componentWillMount() {
-    const { symbolSearch, getWatchlist, navigation } = this.props;
-    symbolSearch();
-    navigation.addListener("willFocus", () => {
-      getWatchlist();
-    });
-  }
-
-  componentWillUnmount() {
-    this.props.navigation.removeListener("willFocus");
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { symbols, watchlist } = nextProps;
-
-    if (symbols) {
-      this.setState({ symbols });
-    }
-
-    if (watchlist) {
-      this.setState({ watchlist });
-    }
+    this.props.getSymbols();
   }
 
   filterList = (list, query) => {
-    return list.filter(item => item.displayName.startsWith(query));
+    return list.filter(item => item.name.startsWith(query));
   };
 
-  onChangeText = query => {
-    const { symbols } = this.state;
+  onChange = query => {
+    const { symbols } = this.props;
     const filtered = this.filterList(symbols, query);
     this.setState({
       query,
@@ -73,86 +47,92 @@ class SearchScreen extends Component {
     });
   };
 
-  onSearchPress = () => {
+  onSearch = () => {
     const { query, symbols } = this.state;
-    const filtered = this.filterList(symbols, query);
+    const filtered = filterList(symbols, query);
     this.setState({ filtered });
   };
 
-  onHeartPress = id => {
-    const { symbols, watchlist } = this.state;
-    const { addSymbolToWatchlist, removeSymbolFromWatchlist } = this.props;
+  followSymbol = (id, name) => {
+    const { watchlist, updateWatchlist } = this.props;
 
-    const isWatched = find(watchlist, symbol => {
-      return symbol.id === id;
-    });
+    const following = !!find(watchlist, symbol => { return symbol.id === id });
 
-    let newWatchlist;
-    let snackbarMsg;
-
-    if (isWatched) {
-      removeSymbolFromWatchlist(id);
-      newWatchlist = watchlist.filter(symbol => {
-        return symbol.displayName !== isWatched.displayName;
-      });
-      snackbarMsg = `${isWatched.displayName} removed from favorites`;
+    if (following) {
+      snackbarMsg = `${name} removed from favorites`;
+      updateWatchlist(id, !following);
     } else {
-      addSymbolToWatchlist(id);
-      const toAdd = find(symbols, symbol => {
-        return symbol.id === id;
-      });
-      newWatchlist = [...watchlist, toAdd];
-      snackbarMsg = `${toAdd.displayName} added to favorites`;
+      snackbarMsg = `${name} added to favorites`;
+      updateWatchlist(id, !following);
     }
-
     this.setState({
-      watchlist: newWatchlist,
       showSnackbar: true,
       snackbarMsg
     });
+
   };
 
-  onNamePress = id => {
-    const { symbols } = this.state;
-    const toSend = find(symbols, symbol => {
-      return symbol.id === id;
-    });
-    const { displayName, price, baseInstrument } = toSend;
-    this.props.navigation.navigate("Symbol", {
-      data: {
-        id: toSend.id,
-        displayName,
-        price,
-        description: baseInstrument.description
-      }
-    });
+  openSymbol = (id, name) => {
+    this.props.getSymbol(id);
+    this.props.navigation.navigate("Symbol", { id, name });
   };
 
-  renderList = symbols => {
-    const { watchlist } = this.state;
+  renderRows = symbols => {
+    const { watchlist } = this.props;
     return symbols.map((symbol, key) => {
-      const { id, displayName, price } = symbol;
-      const avg = (price.bid + price.ask) / 2;
-      const isActive = !!find(watchlist, obj => {
-        return obj.id === id;
-      });
+      const { id, name, price } = symbol;
+      const average = (price.bid + price.ask) / 2;
+      const following = !!find(watchlist, symbol => { return symbol.id === id });
       return (
         <DataRow
           key={key}
-          name={displayName}
-          value={avg.toFixed(2)}
-          isActive={isActive}
-          onHeartPress={() => this.onHeartPress(id)}
-          onNamePress={() => this.onNamePress(id)}
+          name={name}
+          value={average}
+          following={following}
+          onHeartPress={() => this.followSymbol(id, name)}
+          onNamePress={() => this.openSymbol(id, name)}
         />
       );
     });
   };
 
+  renderSymbols = symbols => {
+    const { datatable, activityIndicator } = styles;
+    if (this.props.watchlist) {
+      return (
+        <ScrollView>
+          <DataTable style={datatable}>
+            {this.renderRows(symbols)}
+          </DataTable>
+        </ScrollView>
+      );
+    }
+    return <ActivityIndicator size={40} style={activityIndicator} />;
+  }
+
+  renderSnackbar = () => {
+    const { showSnackbar, snackbarMsg } = this.state;
+    if (showSnackbar) {
+      return (
+        <Snackbar
+          style={styles.snackbar}
+          visible={showSnackbar}
+          onDismiss={() => {
+            this.setState({ showSnackbar: false });
+          }}
+          duration={3000}
+        >
+          {snackbarMsg}
+        </Snackbar>
+      );
+    }
+    return null;
+  }
+
   render() {
-    const { query, symbols, filtered, showSnackbar, snackbarMsg } = this.state;
-    const { container, header, searchbar, datatable, activityIndicator, snackbar } = styles;
-    const listToRender = filtered ? filtered : symbols;
+    const { query, filtered } = this.state;
+    const { container, header, searchbar } = styles;
+    const symbols = filtered ? filtered : this.props.symbols;
     return (
       <View style={container}>
         <Appbar.Header style={header}>
@@ -163,55 +143,30 @@ class SearchScreen extends Component {
           style={searchbar}
           placeholder="Search"
           onChangeText={query => {
-            this.onChangeText(query);
+            this.onChange(query);
           }}
           onIconPress={() => {
-            this.onSearchPress();
+            this.onSearch();
           }}
           value={query}
         />
 
-        {listToRender ? (
-          <ScrollView>
-            <DataTable style={datatable}>
-              {this.renderList(listToRender)}
-            </DataTable>
-          </ScrollView>
-        ) : (
-          <ActivityIndicator size={40} style={activityIndicator} />
-        )}
-
-        {showSnackbar && (
-          <Snackbar
-            style={snackbar}
-            visible={showSnackbar}
-            onDismiss={() => {
-              this.setState({ showSnackbar: false });
-            }}
-            duration={3000}
-          >
-            {snackbarMsg}
-          </Snackbar>
-        )}
+        {this.renderSymbols(symbols)}
+        {this.renderSnackbar()}
       </View>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  symbols: state.symbol.symbolSearch.symbols,
-  watchlist: state.symbol.getWatchlist.watchlist
+  symbols: state.search.symbols,
+  watchlist: state.search.watchlist
 });
 
 const mapDispatchToProps = dispatch => ({
-  symbolSearch: () => dispatch(symbolSearch()),
-  getWatchlist: () => dispatch(getWatchlist()),
-  addSymbolToWatchlist: symbolId => dispatch(addSymbolToWatchlist(symbolId)),
-  removeSymbolFromWatchlist: symbolId =>
-    dispatch(removeSymbolFromWatchlist(symbolId)),
-  getSymbolCharts: symbolId => dispatch(getSymbolCharts(symbolId)),
-  getSymbolNews: (limit, offset, tags) =>
-    dispatch(getSymbolNews(limit, offset, tags))
+  getSymbols: () => dispatch(getSymbols()),
+  updateWatchlist: (id, following) => dispatch(updateWatchlist(id, following)),
+  getSymbol: id => dispatch(getSymbol(id))
 });
 
 export default connect(

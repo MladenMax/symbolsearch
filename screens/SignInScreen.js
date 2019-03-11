@@ -4,8 +4,6 @@ import { KeyboardAvoidingView, Text } from "react-native";
 
 import SignInForm from "../components/SignInForm";
 
-import { getUserInfo, getUserAccounts } from "../redux/user/actions";
-
 import { styles } from "../styles/SignInScreen";
 
 class SignInScreen extends Component {

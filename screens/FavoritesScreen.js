@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import find from "lodash/find";
 
 import { View, ScrollView } from "react-native";
 import { Appbar, DataTable, ActivityIndicator, Snackbar } from "react-native-paper";
 
 import DataRow from "../components/DataRow";
 
-import { getWatchlist, removeSymbolFromWatchlist, getSymbolCharts, getSymbolNews } from "../redux/symbol/actions.js";
+import { getWatchlist, updateWatchlist } from "../redux/search/actions";
+import { getSymbol } from "../redux/symbol/actions.js";
 
 import { styles } from "../styles/MainScreen";
 
@@ -15,120 +15,99 @@ class FavoritesScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      watchlist: null,
       showSnackbar: false,
       snackbarMsg: ""
     };
   }
 
-  componentWillMount() {
-    this.props.navigation.addListener("willFocus", () => {
-      this.props.getWatchlist();
-    });
-  }
-
-  componentWillUnmount() {
-    this.props.navigation.removeListener("willFocus");
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { watchlist } = nextProps;
-    if (watchlist) {
-      this.setState({
-        watchlist
-      });
-    }
-  }
-
-  onHeartPress = (id, displayName) => {
-    const newWatchlist = this.state.watchlist.filter(symbol => {
-      return symbol.displayName !== displayName;
-    });
-    this.props.removeSymbolFromWatchlist(id);
-    const snackbarMsg = `${displayName} removed from favorites`;
+  unfollowSymbol = (id, name) => {
+    this.props.updateWatchlist(id, false);
+    const snackbarMsg = `${name} removed from favorites`;
     this.setState({
-      watchlist: newWatchlist,
       showSnackbar: true,
       snackbarMsg
     });
   };
 
-  onNamePress = id => {
-    const { watchlist } = this.state;
-    const toSend = find(watchlist, symbol => {
-      return symbol.id === id;
-    });
-    const { displayName, price, baseInstrument } = toSend;
-    this.props.navigation.navigate("Symbol", {
-      data: {
-        id: toSend.id,
-        displayName,
-        price,
-        description: baseInstrument.description
-      }
-    });
+  openSymbol = (id, name) => {
+    this.props.getSymbol(id);
+    this.props.navigation.navigate("Symbol", { id, name });
   };
 
-  renderList = watchlist => {
+  renderRows = watchlist => {
     return watchlist.map((symbol, key) => {
-      const { id, displayName, price } = symbol;
-      const avg = (price.bid + price.ask) / 2;
+      const { id, name, price } = symbol;
+      const average = (price.bid + price.ask) / 2;
       return (
         <DataRow
           key={key}
-          name={displayName}
-          value={avg.toFixed(2)}
-          isActive={true}
-          onHeartPress={() => this.onHeartPress(id, displayName)}
-          onNamePress={() => this.onNamePress(id)}
+          name={name}
+          value={average}
+          following={true}
+          onHeartPress={() => this.unfollowSymbol(id, name)}
+          onNamePress={() => this.openSymbol(id, name)}
         />
       );
     });
   };
 
+  renderWatchlist = () => {
+    const { watchlist } = this.props;
+    const { datatable, activityIndicator } = styles;
+    if (watchlist) {
+      return (
+        <ScrollView>
+          <DataTable style={datatable}>
+            {this.renderRows(watchlist)}
+          </DataTable>
+        </ScrollView>
+      );
+    }
+    return <ActivityIndicator size={40} style={activityIndicator} />;
+
+  }
+
+  renderSnackbar = () => {
+    const { showSnackbar, snackbarMsg } = this.state;
+    if (showSnackbar) {
+      return (
+        <Snackbar
+          style={styles.snackbar}
+          visible={showSnackbar}
+          onDismiss={() => {
+            this.setState({ showSnackbar: false });
+          }}
+          duration={3000}
+        >
+          {snackbarMsg}
+        </Snackbar>
+      );
+    }
+    return null;
+  }
+
   render() {
-    const { watchlist, showSnackbar, snackbarMsg } = this.state;
-    const { container, header, datatable, activityIndicator, snackbar } = styles;
+    const { container, header } = styles;
     return (
       <View style={container}>
         <Appbar.Header style={header}>
           <Appbar.Content title="Favorites" />
         </Appbar.Header>
-
-        {watchlist ? (
-          <ScrollView>
-            <DataTable style={datatable}>
-              {this.renderList(watchlist)}
-            </DataTable>
-          </ScrollView>
-        ) : (
-          <ActivityIndicator size={40} style={activityIndicator} />
-        )}
-
-        {showSnackbar && (
-          <Snackbar
-            style={snackbar}
-            visible={showSnackbar}
-            onDismiss={() => {
-              this.setState({ showSnackbar: false });
-            }}
-            duration={3000}
-          >
-            {snackbarMsg}
-          </Snackbar>
-        )}
+        {this.renderWatchlist()}
+        {this.renderSnackbar()}
       </View>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  watchlist: state.symbol.getWatchlist.watchlist
+  watchlist: state.search.watchlist
 });
 
 const mapDispatchToProps = dispatch => ({
   getWatchlist: () => dispatch(getWatchlist()),
-  removeSymbolFromWatchlist: symbolId => dispatch(removeSymbolFromWatchlist(symbolId))
+  updateWatchlist: (id, following) => dispatch(updateWatchlist(id, following)),
+  getSymbol: id => dispatch(getSymbol(id))
 });
 
 export default connect(

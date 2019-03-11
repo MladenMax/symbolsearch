@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
   valueText: {
     color: "#999999"
   },
-  isActiveCell: {
+  followingCell: {
     flexGrow: 1,
     justifyContent: "center"
   }

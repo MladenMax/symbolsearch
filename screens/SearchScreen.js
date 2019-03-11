@@ -48,8 +48,9 @@ class SearchScreen extends Component {
   };
 
   onSearch = () => {
-    const { query, symbols } = this.state;
-    const filtered = filterList(symbols, query);
+    const { query } = this.state;
+    const { symbols } = this.props;
+    const filtered = this.filterList(symbols, query);
     this.setState({ filtered });
   };
 

@@ -25,7 +25,10 @@ class SymbolScreen extends Component {
 
   getChartData = charts => {
     return charts.map(chart => {
-      return Math.round((chart.high + chart.low) / 2);
+      const { high, low } = chart;
+      if (high && low) {
+        return Math.round((high + low) / 2);
+      }
     });
   };
 

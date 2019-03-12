@@ -94,9 +94,9 @@ class SymbolScreen extends Component {
   };
 
   renderShowMoreOrSpinner = () => {
-    const { loading, symbol } = this.props;
+    const { updating, symbol } = this.props;
     const { showMore, showMoreSpinner } = styles;
-    if (!loading) {
+    if (!updating) {
       return <Text style={showMore} onPress={() => { this.onShowMore(symbol.id) }}>SHOW MORE</Text>;
     }
     return <ActivityIndicator size={20} style={showMoreSpinner} />;
@@ -136,7 +136,7 @@ class SymbolScreen extends Component {
 }
 
 const mapStateToProps = state => ({
-  loading: state.symbol.loading,
+  updating: state.symbol.updating,
   symbol: state.symbol.symbol,
   charts: state.symbol.charts,
   news: state.symbol.news

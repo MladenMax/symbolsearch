@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import find from "lodash/find";
 
 import { View, ScrollView } from "react-native";
 import {
@@ -57,7 +56,7 @@ class SearchScreen extends Component {
   followSymbol = (id, name) => {
     const { watchlist, updateWatchlist } = this.props;
 
-    const following = !!find(watchlist, symbol => { return symbol.id === id });
+    const following = !!watchlist.find(symbol => { return symbol.id === id });
 
     if (following) {
       snackbarMsg = `${name} removed from favorites`;
@@ -75,15 +74,14 @@ class SearchScreen extends Component {
 
   openSymbol = (id, name) => {
     this.props.getSymbol(id);
-    this.props.navigation.navigate("Symbol", { id, name });
+    this.props.navigation.navigate("Symbol", { name });
   };
 
-  renderRows = symbols => {
-    const { watchlist } = this.props;
+  renderRows = (symbols, watchlist) => {
     return symbols.map((symbol, key) => {
       const { id, name, price } = symbol;
       const average = (price.bid + price.ask) / 2;
-      const following = !!find(watchlist, symbol => { return symbol.id === id });
+      const following = !!watchlist.find(symbol => { return symbol.id === id });
       return (
         <DataRow
           key={key}
@@ -98,12 +96,13 @@ class SearchScreen extends Component {
   };
 
   renderSymbols = symbols => {
+    const { watchlist } = this.props;
     const { datatable, activityIndicator } = styles;
-    if (this.props.watchlist) {
+    if (watchlist) {
       return (
         <ScrollView>
           <DataTable style={datatable}>
-            {this.renderRows(symbols)}
+            {this.renderRows(symbols, watchlist)}
           </DataTable>
         </ScrollView>
       );

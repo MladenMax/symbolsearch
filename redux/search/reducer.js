@@ -4,15 +4,13 @@ const INITIAL_STATE = {
     loading: false,
     error: null,
     symbols: null,
-    watchlist: null,
-    updated_watchlist: false
+    watchlist: null
 };
 
 // ----- HELPER -----
 
 const updateSearch = (state, data) => {
     return Object.assign({}, state, data);
-
 }
 
 // ----- GET SYMBOLS -----
@@ -83,9 +81,10 @@ const updateWatchlistError = (state, error) => {
     return updateSearch(state, data);
 }
 
-const updateWatchlistEnd = (state, updated_watchlist) => {
+const updateWatchlistEnd = (state, symbol, following) => {
     const data = {
-        updated_watchlist
+        loading: false,
+        watchlist: following ? [...state.watchlist, symbol] : state.watchlist.filter(item => { return item.id !== symbol.id })
     };
     return updateSearch(state, data);
 }
@@ -127,7 +126,7 @@ export const searchReducer = (state = INITIAL_STATE, action) => {
     }
 
     if (action.type === TYPES.UPDATE_WATCHLIST_END) {
-        return updateWatchlistEnd(state, action.updated_watchlist);
+        return updateWatchlistEnd(state, action.symbol, action.following);
     }
 
     return state;

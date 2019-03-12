@@ -114,10 +114,11 @@ const updateWatchlistError = error => {
 	}
 }
 
-const updateWatchlistEnd = updated_watchlist => {
+const updateWatchlistEnd = (symbol, following) => {
 	return {
 		type: TYPES.UPDATE_WATCHLIST_END,
-		updated_watchlist
+		symbol,
+		following
 	}
 }
 
@@ -127,9 +128,13 @@ export const updateWatchlist = (symbolId, following) => {
 		return getItem("account_id")
 			.then(accountId => {
 				return put(`/accounts/${accountId}/watchlist/${symbolId}`, null, { following })
-					.then(() => {
-						dispatch(updateWatchlistEnd(true));
-						return dispatch(getWatchlist());
+					.then(res => {
+						const symbol = {
+							id: res.id,
+							name: res.displayName,
+							price: res.price
+						};
+						return dispatch(updateWatchlistEnd(symbol, following));
 					})
 					.catch(error => {
 						return dispatch(updateWatchlistError(error));

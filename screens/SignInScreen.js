@@ -12,9 +12,7 @@ class SignInScreen extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.authenticated) {
-      this.props.navigation.navigate("Tabs");
-    }
+    nextProps.authenticated && this.props.navigation.navigate("Tabs");
   }
 
   render() {

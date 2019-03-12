@@ -5,7 +5,8 @@ const INITITAL_STATE = {
   error: null,
   symbol: null,
   charts: null,
-  news: null
+  news: null,
+  updating: false,
 };
 
 // ----- HELPERS -----
@@ -17,6 +18,7 @@ const updateSymbol = (state, data) => {
 
 const getSymbolInit = state => {
   const data = {
+    loading: true,
     error: null
   }
   return updateSymbol(state, data);
@@ -24,6 +26,7 @@ const getSymbolInit = state => {
 
 const getSymbolError = (state, error) => {
   const data = {
+    loading: false,
     error
   }
   return updateSymbol(state, data);
@@ -47,6 +50,7 @@ const getChartsInit = state => {
 
 const getChartsError = (state, error) => {
   const data = {
+    loading: false,
     error
   }
   return updateSymbol(state, data);
@@ -63,7 +67,7 @@ const getChartsEnd = (state, charts) => {
 
 const getNewsInit = state => {
   const data = {
-    loading: true,
+    updating: true,
     error: null
   }
   return updateSymbol(state, data);
@@ -72,6 +76,7 @@ const getNewsInit = state => {
 const getNewsError = (state, error) => {
   const data = {
     loading: false,
+    updating: false,
     error
   }
   return updateSymbol(state, data);
@@ -80,6 +85,7 @@ const getNewsError = (state, error) => {
 const getNewsEnd = (state, news) => {
   const data = {
     loading: false,
+    updating: false,
     news
   }
   return updateSymbol(state, data);

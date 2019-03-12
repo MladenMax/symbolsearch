@@ -12,20 +12,20 @@ class DataRow extends Component {
     name: PropTypes.string,
     value: PropTypes.number,
     following: PropTypes.bool,
-    onHeartPress: PropTypes.func,
-    onNamePress: PropTypes.func
+    followSymbol: PropTypes.func,
+    openSymbol: PropTypes.func
   };
 
   render() {
-    const { name, value, following, onHeartPress, onNamePress } = this.props;
+    const { name, value, following, followSymbol, openSymbol } = this.props;
     const { row, nameCell, valueCell, valueText, followingCell } = styles;
     return (
       <DataTable.Row style={row}>
-        <DataTable.Cell style={nameCell} onPress={onNamePress}>{name}</DataTable.Cell>
+        <DataTable.Cell style={nameCell} onPress={openSymbol}>{name}</DataTable.Cell>
         <DataTable.Cell style={valueCell}>
           <Text style={valueText}>{`$ ${value.toFixed(2)}`}</Text>
         </DataTable.Cell>
-        <DataTable.Cell style={followingCell} onPress={onHeartPress}>
+        <DataTable.Cell style={followingCell} onPress={followSymbol}>
           <DataRowIcon following={following} />
         </DataTable.Cell>
       </DataTable.Row>

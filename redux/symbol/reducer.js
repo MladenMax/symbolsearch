@@ -7,6 +7,7 @@ const INITITAL_STATE = {
   charts: null,
   news: null,
   updating: false,
+  newsUpdate: null
 };
 
 // ----- HELPERS -----
@@ -19,7 +20,8 @@ const updateSymbol = (state, data) => {
 const getSymbolInit = state => {
   const data = {
     loading: true,
-    error: null
+    error: null,
+    news: null
   }
   return updateSymbol(state, data);
 }
@@ -91,6 +93,32 @@ const getNewsEnd = (state, news) => {
   return updateSymbol(state, data);
 }
 
+// ----- UPDATE NEWS -----
+
+const updateNewsInit = state => {
+  const data = {
+    updating: true,
+    error: null
+  }
+  return updateSymbol(state, data);
+}
+
+const updateNewsError = (state, error) => {
+  const data = {
+    updating: false,
+    error
+  }
+  return updateSymbol(state, data);
+}
+
+const updateNewsEnd = (state, newsUpdate) => {
+  const data = {
+    updating: false,
+    newsUpdate
+  }
+  return updateSymbol(state, data);
+}
+
 // ----- SYMBOL REDUCER -----
 
 export const symbolReducer = (state = INITITAL_STATE, action) => {
@@ -129,6 +157,18 @@ export const symbolReducer = (state = INITITAL_STATE, action) => {
 
   if (action.type === TYPES.GET_NEWS_END) {
     return getNewsEnd(state, action.news);
+  }
+
+  if (action.type === TYPES.UPDATE_NEWS_INIT) {
+    return updateNewsInit(state);
+  }
+
+  if (action.type === TYPES.UPDATE_NEWS_ERROR) {
+    return updateNewsError(state, action.error);
+  }
+
+  if (action.type === TYPES.UPDATE_NEWS_END) {
+    return updateNewsEnd(state, action.newsUpdate);
   }
 
   return state;

@@ -3,12 +3,6 @@ import { StyleSheet, Dimensions } from "react-native";
 const width = Dimensions.get("window").width;
 
 export const styles = StyleSheet.create({
-  symbolSpinner: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignSelf: "center",
-    color: "#009688"
-  },
   showMoreSpinner: {
     padding: 20,
     alignSelf: 'center',

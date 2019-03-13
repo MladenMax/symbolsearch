@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { View, ScrollView, Text } from "react-native";
 import { Appbar, Divider, ActivityIndicator } from "react-native-paper";
-import { LineChart } from "react-native-svg-charts";
+
 import "react-native-svg";
+import { LineChart } from "react-native-svg-charts";
 import moment from 'moment';
 
 import { getNews } from "../redux/symbol/actions.js";
@@ -38,20 +39,6 @@ class SymbolScreen extends Component {
     this.setState({ limit });
   };
 
-  renderChart = charts => {
-    if (charts) {
-      return (
-        <LineChart
-          style={styles.chart}
-          data={this.getChartData(charts)}
-          svg={{ stroke: "rgb(0, 150, 136)" }}
-          contentInset={{ top: 20, bottom: 20 }}
-        />
-      );
-    }
-    return null;
-  }
-
   renderAbout = description => {
     if (!!description) {
       const { content, subTitle, descriptionText } = styles;
@@ -65,14 +52,29 @@ class SymbolScreen extends Component {
     return null;
   }
 
-  renderNews = news => {
+  renderChart = () => {
+    const charts = this.props.navigation.getParam('data').charts;
+    if (charts) {
+      return (
+        <LineChart
+          style={styles.chart}
+          data={this.getChartData(charts)}
+          svg={{ stroke: "rgb(0, 150, 136)" }}
+          contentInset={{ top: 20, bottom: 20 }}
+        />
+      );
+    }
+    return null;
+  }
+
+  renderNews = () => {
+    const { news } = this.props;
     if (news) {
       const { content, subTitle } = styles;
       return (
         <View style={content}>
           <Text style={subTitle}>NEWS</Text>
           {this.renderRows(news)}
-          {this.renderShowMoreOrSpinner()}
         </View>
       );
     }
@@ -93,43 +95,34 @@ class SymbolScreen extends Component {
     });
   };
 
-  renderShowMoreOrSpinner = () => {
-    const { updating, symbol } = this.props;
+  renderShowMoreOrSpinner = id => {
+    const { updating } = this.props;
     const { showMore, showMoreSpinner } = styles;
     if (!updating) {
-      return <Text style={showMore} onPress={() => { this.onShowMore(symbol.id) }}>SHOW MORE</Text>;
+      return <Text style={showMore} onPress={() => { this.onShowMore(id) }}>SHOW MORE</Text>;
     }
     return <ActivityIndicator size={20} style={showMoreSpinner} />;
   }
-
-  renderContent = () => {
-    const { symbol, news, charts } = this.props;
-    const { heading, symbolSpinner } = styles;
-    if (symbol) {
-      const { price, description } = symbol;
-      const average = (price.bid + price.ask) / 2;
-      return (
-        <ScrollView>
-          <Text style={heading}>{`$ ${average.toFixed(2)}`}</Text>
-          {this.renderChart(charts)}
-          {this.renderAbout(description)}
-          {this.renderNews(news)}
-        </ScrollView>
-      )
-    }
-    return <ActivityIndicator size={40} style={symbolSpinner} />;
-  }
-
+  
   render() {
-    const name = this.props.navigation.getParam("name");
-    const { container, header } = styles;
+    const symbol = this.props.navigation.getParam('data').symbol;
+    const { id, name, price, description } = symbol;
+    const average = (price.bid + price.ask) / 2;
+    const { container, header, heading } = styles;
     return (
       <View style={container}>
         <Appbar.Header style={header}>
           <Appbar.BackAction onPress={this.goBack} />
           <Appbar.Content title={name} />
         </Appbar.Header>
-        {this.renderContent()}
+
+        <ScrollView>
+          <Text style={heading}>{`$ ${average.toFixed(2)}`}</Text>
+          {this.renderChart()}
+          {this.renderAbout(description)}
+          {this.renderNews()}
+          {this.renderShowMoreOrSpinner(id)}
+        </ScrollView>
       </View>
     );
   }
@@ -137,8 +130,6 @@ class SymbolScreen extends Component {
 
 const mapStateToProps = state => ({
   updating: state.symbol.updating,
-  symbol: state.symbol.symbol,
-  charts: state.symbol.charts,
   news: state.symbol.news
 });
 

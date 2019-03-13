@@ -1,35 +1,55 @@
 import * as TYPES from "./types";
 
 const INITITAL_STATE = {
-  loading: false,
+  isOpen: false,
   error: null,
+  opening: false,
   symbol: null,
   charts: null,
   news: null,
-  updating: false,
-  newsUpdate: null
+  updating: false
 };
 
-// ----- HELPERS -----
+// ----- HELPER -----
 
 const updateSymbol = (state, data) => {
   return Object.assign({}, state, data);
 }
+
+// ----- OPEN SYMBOL -----
+
+const openSymbol = (state, opening) => {
+  const data = {
+    opening,
+    error: null
+  }
+  return updateSymbol(state, data);
+}
+
+// ----- CLOSE SYMBOL -----
+
+const closeSymbol = state => {
+  const data = {
+    opening: false,
+    isOpen: false,
+    symbol: null,
+    charts: null,
+    news: null
+  };
+  return updateSymbol(state, data);
+}
+
 // ----- GET SYMBOL -----
 
 const getSymbolInit = state => {
   const data = {
-    loading: true,
-    error: null,
-    news: null,
-    newsUpdate: null
+    error: null
   }
   return updateSymbol(state, data);
 }
 
 const getSymbolError = (state, error) => {
   const data = {
-    loading: false,
     error
   }
   return updateSymbol(state, data);
@@ -53,7 +73,6 @@ const getChartsInit = state => {
 
 const getChartsError = (state, error) => {
   const data = {
-    loading: false,
     error
   }
   return updateSymbol(state, data);
@@ -78,7 +97,6 @@ const getNewsInit = state => {
 
 const getNewsError = (state, error) => {
   const data = {
-    loading: false,
     updating: false,
     error
   }
@@ -87,7 +105,7 @@ const getNewsError = (state, error) => {
 
 const getNewsEnd = (state, news) => {
   const data = {
-    loading: false,
+    isOpen: true,
     updating: false,
     news
   }
@@ -132,6 +150,14 @@ export const symbolReducer = (state = INITITAL_STATE, action) => {
 
   if (action.type === TYPES.GET_NEWS_END) {
     return getNewsEnd(state, action.news);
+  }
+
+  if (action.type === TYPES.OPEN_SYMBOL) {
+    return openSymbol(state, action.opening);
+  }
+
+  if (action.type === TYPES.CLOSE_SYMBOL) {
+    return closeSymbol(state);
   }
 
   return state;

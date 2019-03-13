@@ -17,7 +17,16 @@ export const styles = StyleSheet.create({
   datatable: {
     width: width - 20
   },
-  activityIndicator: {
+  
+  overlay: {
+    width: width,
+    height: height,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 999
+  },
+  indicator: {
     flexGrow: 1,
     justifyContent: "center",
     alignSelf: "center",
@@ -26,12 +35,4 @@ export const styles = StyleSheet.create({
   snackbar: {
     backgroundColor: "#009688"
   },
-  overlay: {
-    width: width,
-    height: height,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    zIndex: 999
-  }
 });

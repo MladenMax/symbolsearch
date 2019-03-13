@@ -7,7 +7,7 @@ import "react-native-svg";
 import { LineChart } from "react-native-svg-charts";
 import moment from 'moment';
 
-import { getNews } from "../redux/symbol/actions.js";
+import { getNews, closeSymbol } from "../redux/symbol/actions.js";
 
 import { styles } from "../styles/SymbolScreen";
 
@@ -21,6 +21,7 @@ class SymbolScreen extends Component {
   }
 
   goBack = () => {
+    this.props.closeSymbol();
     this.props.navigation.goBack();
   };
 
@@ -53,7 +54,7 @@ class SymbolScreen extends Component {
   }
 
   renderChart = () => {
-    const charts = this.props.navigation.getParam('data').charts;
+    const { charts } = this.props;
     if (charts) {
       return (
         <LineChart
@@ -103,37 +104,43 @@ class SymbolScreen extends Component {
     }
     return <ActivityIndicator size={20} style={showMoreSpinner} />;
   }
-  
-  render() {
-    const symbol = this.props.navigation.getParam('data').symbol;
-    const { id, name, price, description } = symbol;
-    const average = (price.bid + price.ask) / 2;
-    const { container, header, heading } = styles;
-    return (
-      <View style={container}>
-        <Appbar.Header style={header}>
-          <Appbar.BackAction onPress={this.goBack} />
-          <Appbar.Content title={name} />
-        </Appbar.Header>
 
-        <ScrollView>
-          <Text style={heading}>{`$ ${average.toFixed(2)}`}</Text>
-          {this.renderChart()}
-          {this.renderAbout(description)}
-          {this.renderNews()}
-          {this.renderShowMoreOrSpinner(id)}
-        </ScrollView>
-      </View>
-    );
+  render() {
+    const { symbol } = this.props;
+    const { container, header, heading } = styles;
+    if (symbol) {
+      const { id, name, price, description } = symbol;
+      const average = (price.bid + price.ask) / 2;
+      return (
+        <View style={container}>
+          <Appbar.Header style={header}>
+            <Appbar.BackAction onPress={this.goBack} />
+            <Appbar.Content title={name} />
+          </Appbar.Header>
+
+          <ScrollView>
+            <Text style={heading}>{`$ ${average.toFixed(2)}`}</Text>
+            {this.renderChart()}
+            {this.renderAbout(description)}
+            {this.renderNews()}
+            {this.renderShowMoreOrSpinner(id)}
+          </ScrollView>
+        </View>
+      );
+    }
+    return null
   }
 }
 
 const mapStateToProps = state => ({
-  updating: state.symbol.updating,
-  news: state.symbol.news
+  symbol: state.symbol.symbol,
+  charts: state.symbol.charts,
+  news: state.symbol.news,
+  updating: state.symbol.updating
 });
 
 const mapDispatchToProps = dispatch => ({
+  closeSymbol: () => dispatch(closeSymbol()),
   getNews: (limit, offset, id) => dispatch(getNews(limit, offset, id))
 });
 

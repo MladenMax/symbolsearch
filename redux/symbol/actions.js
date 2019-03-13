@@ -3,6 +3,28 @@ import { apiConfig } from "../../config/api";
 import { getItem } from "../../util/deviceStorage";
 import { get } from "../../lib/http";
 
+// ----- OPEN SYMBOL -----
+
+export const openSymbol = id => {
+	return dispatch => {
+		dispatch(getSymbol(id));
+		dispatch({
+			type: TYPES.OPEN_SYMBOL,
+			opening: true
+		})
+	}
+}
+
+// ----- CLOSE SYMBOL -----
+
+export const closeSymbol = () => {
+	return dispatch => {
+		dispatch({
+			type: TYPES.CLOSE_SYMBOL
+		})
+	}
+}
+
 // ----- GET SYMBOL -----
 
 const getSymbolInit = () => {

@@ -13,7 +13,7 @@ import {
 import DataRow from "../components/DataRow";
 
 import { getSymbols, updateWatchlist } from "../redux/search/actions";
-import { getSymbol } from "../redux/symbol/actions.js";
+import { openSymbol } from "../redux/symbol/actions.js";
 
 import { styles } from "../styles/MainScreen";
 
@@ -34,9 +34,8 @@ class SearchScreen extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { symbol, charts, news  } = nextProps;
-    if (news) {
-      this.props.navigation.navigate("Symbol", { data: { symbol, charts } });
+    if (nextProps.isOpen) {
+      this.props.navigation.navigate("Symbol");
     }
   }
 
@@ -76,11 +75,10 @@ class SearchScreen extends Component {
       showSnackbar: true,
       snackbarMsg
     });
-
   };
 
   openSymbol = id => {
-    this.props.getSymbol(id);
+    this.props.openSymbol(id);
   };
 
   renderRows = (symbols, watchlist) => {
@@ -101,21 +99,6 @@ class SearchScreen extends Component {
     });
   };
 
-  renderSymbols = symbols => {
-    const { watchlist } = this.props;
-    const { datatable, activityIndicator } = styles;
-    if (watchlist) {
-      return (
-        <ScrollView>
-          <DataTable style={datatable}>
-            {this.renderRows(symbols, watchlist)}
-          </DataTable>
-        </ScrollView>
-      );
-    }
-    return <ActivityIndicator size={40} style={activityIndicator} />;
-  }
-
   renderSnackbar = () => {
     const { showSnackbar, snackbarMsg } = this.state;
     if (showSnackbar) {
@@ -135,21 +118,44 @@ class SearchScreen extends Component {
     return null;
   }
 
-  renderOverlay = () => {
-    const { overlay, activityIndicator } = styles;
-    if (this.props.loading) {
+  renderLoaderOrSymbols = () => {
+    const { filtered } = this.state;
+    const { symbols, watchlist } = this.props;
+    const { datatable, overlay, indicator } = styles;
+    if (watchlist) {
+      const toRender = filtered ? filtered : symbols;
+      return (
+        <ScrollView>
+          <DataTable style={datatable}>
+            {this.renderRows(toRender, watchlist)}
+          </DataTable>
+        </ScrollView>
+      );
+    } else {
       return (
         <View style={overlay}>
-          <ActivityIndicator size={40} style={activityIndicator} />
+          <ActivityIndicator size={40} style={indicator} />
         </View>
       )
     }
   }
 
+  renderOpeningLoader = () => {
+    const { opening } = this.props;
+    const { overlay, indicator } = styles;
+    if (opening) {
+      return (
+        <View style={overlay}>
+          <ActivityIndicator size={40} style={indicator} />
+        </View>
+      )
+    }
+    return null;
+  }
+
   render() {
-    const { query, filtered } = this.state;
+    const { query } = this.state;
     const { container, header, searchbar } = styles;
-    const symbols = filtered ? filtered : this.props.symbols;
     return (
       <View style={container}>
         <Appbar.Header style={header}>
@@ -167,9 +173,9 @@ class SearchScreen extends Component {
           }}
           value={query}
         />
-        {this.renderOverlay()}
-        {this.renderSymbols(symbols)}
+        {this.renderLoaderOrSymbols()}
         {this.renderSnackbar()}
+        {this.renderOpeningLoader()}
       </View>
     );
   }
@@ -178,16 +184,14 @@ class SearchScreen extends Component {
 const mapStateToProps = state => ({
   symbols: state.search.symbols,
   watchlist: state.search.watchlist,
-  loading: state.symbol.loading,
-  symbol: state.symbol.symbol,
-  charts: state.symbol.charts,
-  news: state.symbol.news
+  opening: state.symbol.opening,
+  isOpen: state.symbol.isOpen
 });
 
 const mapDispatchToProps = dispatch => ({
   getSymbols: () => dispatch(getSymbols()),
   updateWatchlist: (id, following) => dispatch(updateWatchlist(id, following)),
-  getSymbol: id => dispatch(getSymbol(id))
+  openSymbol: id => dispatch(openSymbol(id))
 });
 
 export default connect(

@@ -20,6 +20,13 @@ class FavoritesScreen extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { symbol, charts, news  } = nextProps;
+    if (news) {
+      this.props.navigation.navigate("Symbol", { data: { symbol, charts } });
+    }
+  }
+
   unfollowSymbol = (id, name) => {
     this.props.updateWatchlist(id, false);
     const snackbarMsg = `${name} removed from favorites`;
@@ -29,9 +36,8 @@ class FavoritesScreen extends Component {
     });
   };
 
-  openSymbol = (id, name) => {
+  openSymbol = id => {
     this.props.getSymbol(id);
-    this.props.navigation.navigate("Symbol", { id, name });
   };
 
   renderRows = watchlist => {
@@ -44,8 +50,8 @@ class FavoritesScreen extends Component {
           name={name}
           value={average}
           following={true}
-          onHeartPress={() => this.unfollowSymbol(id, name)}
-          onNamePress={() => this.openSymbol(id, name)}
+          followSymbol={() => this.unfollowSymbol(id, name)}
+          openSymbol={() => this.openSymbol(id)}
         />
       );
     });
@@ -86,6 +92,17 @@ class FavoritesScreen extends Component {
     return null;
   }
 
+  renderOverlay = () => {
+    const { overlay, activityIndicator } = styles;
+    if (this.props.loading) {
+      return (
+        <View style={overlay}>
+          <ActivityIndicator size={40} style={activityIndicator} />
+        </View>
+      )
+    }
+  }
+
   render() {
     const { container, header } = styles;
     return (
@@ -93,6 +110,7 @@ class FavoritesScreen extends Component {
         <Appbar.Header style={header}>
           <Appbar.Content title="Favorites" />
         </Appbar.Header>
+        {this.renderOverlay()}
         {this.renderWatchlist()}
         {this.renderSnackbar()}
       </View>
@@ -101,7 +119,11 @@ class FavoritesScreen extends Component {
 }
 
 const mapStateToProps = state => ({
-  watchlist: state.search.watchlist
+  watchlist: state.search.watchlist,
+  loading: state.symbol.loading,
+  symbol: state.symbol.symbol,
+  charts: state.symbol.charts,
+  news: state.symbol.news
 });
 
 const mapDispatchToProps = dispatch => ({

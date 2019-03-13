@@ -1,6 +1,7 @@
 import { StyleSheet, Dimensions } from "react-native";
 
 const width = Dimensions.get("window").width;
+const height = Dimensions.get("window").height;
 
 export const styles = StyleSheet.create({
   container: {
@@ -24,5 +25,13 @@ export const styles = StyleSheet.create({
   },
   snackbar: {
     backgroundColor: "#009688"
+  },
+  overlay: {
+    width: width,
+    height: height,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 999
   }
 });

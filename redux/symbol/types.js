@@ -9,7 +9,3 @@ export const GET_CHARTS_END = 'GET_CHARTS_END';
 export const GET_NEWS_INIT = 'GET_NEWS_INIT';
 export const GET_NEWS_ERROR = 'GET_NEWS_ERROR';
 export const GET_NEWS_END = 'GET_NEWS_END';
-
-export const UPDATE_NEWS_INIT = 'UPDATE_NEWS_INIT';
-export const UPDATE_NEWS_ERROR = 'UPDATE_NEWS_ERROR';
-export const UPDATE_NEWS_END = 'UPDATE_NEWS_END';

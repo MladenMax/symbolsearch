@@ -1,7 +1,7 @@
-import * as TYPES from "./types";
-import { apiConfig } from "../../config/api";
-import { getItem } from "../../util/deviceStorage";
-import { get } from "../../lib/http";
+import * as TYPES from './types';
+import { apiConfig } from '../../config/api';
+import { getItem } from '../../util/deviceStorage';
+import { get } from '../../lib/http';
 
 // ----- OPEN SYMBOL -----
 
@@ -10,47 +10,47 @@ export const openSymbol = id => {
 		dispatch(getSymbol(id));
 		dispatch({
 			type: TYPES.OPEN_SYMBOL,
-			opening: true
-		})
-	}
-}
+			opening: true,
+		});
+	};
+};
 
 // ----- CLOSE SYMBOL -----
 
 export const closeSymbol = () => {
 	return dispatch => {
 		dispatch({
-			type: TYPES.CLOSE_SYMBOL
-		})
-	}
-}
+			type: TYPES.CLOSE_SYMBOL,
+		});
+	};
+};
 
 // ----- GET SYMBOL -----
 
 const getSymbolInit = () => {
 	return {
-		type: TYPES.GET_SYMBOL_INIT
-	}
-}
+		type: TYPES.GET_SYMBOL_INIT,
+	};
+};
 
 const getSymbolError = error => {
 	return {
 		type: TYPES.GET_SYMBOL_ERROR,
-		error
-	}
-}
+		error,
+	};
+};
 
 const getSymbolEnd = symbol => {
 	return {
 		type: TYPES.GET_SYMBOL_END,
-		symbol
-	}
-}
+		symbol,
+	};
+};
 
 export const getSymbol = symbolId => {
 	return dispatch => {
 		dispatch(getSymbolInit());
-		return getItem("user_id")
+		return getItem('user_id')
 			.then(userId => {
 				return get(`/users/${userId}/symbols/${symbolId}`, null)
 					.then(res => {
@@ -58,7 +58,7 @@ export const getSymbol = symbolId => {
 							id: res.id,
 							name: res.displayName,
 							price: res.price,
-							description: res.baseInstrument.description.trim()
+							description: res.baseInstrument.description.trim(),
 						};
 						dispatch(getSymbolEnd(symbol));
 						return dispatch(getCharts(symbolId));
@@ -70,46 +70,46 @@ export const getSymbol = symbolId => {
 			.catch(error => {
 				throw error;
 			});
-	}
-}
+	};
+};
 
 // ----- GET CHARTS -----
 
 const getChartsInit = () => {
 	return {
-		type: TYPES.GET_CHARTS_INIT
-	}
-}
+		type: TYPES.GET_CHARTS_INIT,
+	};
+};
 
 const getChartsError = error => {
 	return {
 		type: TYPES.GET_CHARTS_ERROR,
-		error
-	}
-}
+		error,
+	};
+};
 
 const getChartsEnd = charts => {
 	return {
 		type: TYPES.GET_CHARTS_END,
-		charts
-	}
-}
+		charts,
+	};
+};
 
 export const getCharts = symbolId => {
 	return dispatch => {
 		dispatch(getChartsInit());
-		return getItem("user_id")
+		return getItem('user_id')
 			.then(userId => {
 				return get(`/users/${userId}/symbols/${symbolId}/charts`, null)
 					.then(res => {
 						const charts = res.map(chart => {
 							return {
 								high: chart.high,
-								low: chart.low
+								low: chart.low,
 							};
 						});
 						dispatch(getChartsEnd(charts));
-						return dispatch(getNews(5, 0, symbolId))
+						return dispatch(getNews(5, 0, symbolId));
 					})
 					.catch(error => {
 						return dispatch(getChartsError(error));
@@ -118,30 +118,30 @@ export const getCharts = symbolId => {
 			.catch(error => {
 				throw error;
 			});
-	}
-}
+	};
+};
 
 // ----- GET NEWS -----
 
 const getNewsInit = () => {
 	return {
-		type: TYPES.GET_NEWS_INIT
-	}
-}
+		type: TYPES.GET_NEWS_INIT,
+	};
+};
 
 const getNewsError = error => {
 	return {
 		type: TYPES.GET_NEWS_ERROR,
-		error
-	}
-}
+		error,
+	};
+};
 
 const getNewsEnd = news => {
 	return {
 		type: TYPES.GET_NEWS_END,
-		news
-	}
-}
+		news,
+	};
+};
 
 export const getNews = (limit, offset, tag) => {
 	return dispatch => {
@@ -149,7 +149,7 @@ export const getNews = (limit, offset, tag) => {
 		return get(`applications/${apiConfig.applicationId}/news/coinpulse`, {
 			limit,
 			offset,
-			tag
+			tag,
 		})
 			.then(res => {
 				return dispatch(getNewsEnd(res.results));
@@ -157,5 +157,5 @@ export const getNews = (limit, offset, tag) => {
 			.catch(error => {
 				return dispatch(getNewsError(error));
 			});
-	}
-}
+	};
+};

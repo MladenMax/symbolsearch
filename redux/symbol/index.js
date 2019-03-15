@@ -1,5 +1,5 @@
-import * as symbolActions from "./actions";
+import * as symbolActions from './actions';
 
-export * from "./types";
+export * from './types';
 export { symbolActions };
-export { symbolReducer } from "./reducer";
+export { symbolReducer } from './reducer';

@@ -1,5 +1,5 @@
-import * as searchActions from "./actions";
+import * as searchActions from './actions';
 
-export * from "./types";
+export * from './types';
 export { searchActions };
-export { searchReducer } from "./reducer";
+export { searchReducer } from './reducer';

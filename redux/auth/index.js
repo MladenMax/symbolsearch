@@ -1,5 +1,5 @@
-import * as authActions from "./actions";
+import * as authActions from './actions';
 
-export * from "./types";
+export * from './types';
 export { authActions };
-export { authReducer } from "./reducer";
+export { authReducer } from './reducer';

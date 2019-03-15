@@ -11,126 +11,80 @@ const INITIAL_STATE = {
 
 // ----- HELPER -----
 
-const updateAuth = (state, data) => {
+const changeState = (state, data) => {
 	return Object.assign({}, state, data);
 };
 
-// ----- AUTH USER -----
+// ----- AUTH -----
 
-const authUserInit = state => {
+const initAuth = state => {
 	const data = {
 		loading: true,
 		error: null,
 	};
-	return updateAuth(state, data);
+	return changeState(state, data);
 };
 
-const authUserError = (state, error) => {
+const initInfo = state => {
+	const data = {
+		error: null,
+	};
+	return changeState(state, data);
+};
+
+const initError = (state, error) => {
 	const data = {
 		loading: false,
-		authenticated: false,
 		error,
 	};
-	return updateAuth(state, data);
+	return changeState(state, data);
 };
 
-const authUserEnd = (state, access_token) => {
+const endAuth = (state, access_token) => {
 	const data = {
+		error: null,
 		access_token,
 	};
-	return updateAuth(state, data);
+	return changeState(state, data);
 };
 
-// ----- GET USER -----
-
-const getUserInit = state => {
+const endUser = (state, user_id) => {
 	const data = {
 		error: null,
-	};
-	return updateAuth(state, data);
-};
-
-const getUserError = (state, error) => {
-	const data = {
-		loading: false,
-		authenticated: false,
-		error,
-	};
-	return updateAuth(state, data);
-};
-
-const getUserEnd = (state, user_id) => {
-	const data = {
 		user_id,
 	};
-	return updateAuth(state, data);
+	return changeState(state, data);
 };
 
-// ----- GET ACCOUNT -----
-
-const getAccountInit = state => {
+const endAccount = (state, account_id) => {
 	const data = {
 		error: null,
-	};
-	return updateAuth(state, data);
-};
-
-const getAccountError = (state, error) => {
-	const data = {
-		loading: false,
-		authenticated: false,
-		error,
-	};
-	return updateAuth(state, data);
-};
-
-const getAccountEnd = (state, account_id) => {
-	const data = {
-		loading: false,
-		authenticated: true,
 		account_id,
+		authenticated: true,
 	};
-	return updateAuth(state, data);
+	return changeState(state, data);
 };
 
-// ----- AUTH REDUCER -----
+export const authReducer = (state = INITIAL_STATE, { type, payload }) => {
+	switch (type) {
+		case TYPES.AUTH_USER_INIT:
+			return initAuth(state);
+		case TYPES.GET_USER_INIT:
+		case TYPES.GET_ACCOUNT_INIT:
+			return initInfo(state);
 
-export const authReducer = (state = INITIAL_STATE, action) => {
-	if (action.type === TYPES.AUTH_USER_INIT) {
-		return authUserInit(state);
+		case TYPES.AUTH_USER_ERROR:
+		case TYPES.GET_USER_ERROR:
+		case TYPES.GET_ACCOUNT_ERROR:
+			return initError(state, payload);
+
+		case TYPES.AUTH_USER_END:
+			return endAuth(state, payload);
+		case TYPES.GET_USER_END:
+			return endUser(state, payload);
+		case TYPES.GET_ACCOUNT_END:
+			return endAccount(state, payload);
+		default:
+			return state;
 	}
-
-	if (action.type === TYPES.AUTH_USER_ERROR) {
-		return authUserError(state, action.error);
-	}
-
-	if (action.type === TYPES.AUTH_USER_END) {
-		return authUserEnd(state, action.access_token);
-	}
-
-	if (action.type === TYPES.GET_USER_INIT) {
-		return getUserInit(state);
-	}
-
-	if (action.type === TYPES.GET_USER_ERROR) {
-		return getUserError(state, action.error);
-	}
-
-	if (action.type === TYPES.GET_USER_END) {
-		return getUserEnd(state, action.user_id);
-	}
-
-	if (action.type === TYPES.GET_ACCOUNT_INIT) {
-		return getAccountInit(state);
-	}
-
-	if (action.type === TYPES.GET_ACCOUNT_ERROR) {
-		return getAccountError(state, action.error);
-	}
-
-	if (action.type === TYPES.GET_ACCOUNT_END) {
-		return getAccountEnd(state, action.account_id);
-	}
-
-	return state;
 };

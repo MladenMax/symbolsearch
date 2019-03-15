@@ -13,14 +13,14 @@ const authUserInit = () => {
 const authUserError = error => {
 	return {
 		type: TYPES.AUTH_USER_ERROR,
-		error,
+		payload: error,
 	};
 };
 
 const authUserEnd = access_token => {
 	return {
 		type: TYPES.AUTH_USER_END,
-		access_token,
+		payload: access_token,
 	};
 };
 
@@ -55,14 +55,14 @@ const getUserInit = () => {
 const getUserError = error => {
 	return {
 		type: TYPES.GET_USER_ERROR,
-		error,
+		payload: error,
 	};
 };
 
 const getUserEnd = user_id => {
 	return {
 		type: TYPES.GET_USER_END,
-		user_id,
+		payload: user_id,
 	};
 };
 
@@ -97,14 +97,14 @@ const getAccountInit = () => {
 const getAccountError = error => {
 	return {
 		type: TYPES.GET_ACCOUNT_ERROR,
-		error,
+		payload: error,
 	};
 };
 
 const getAccountEnd = account_id => {
 	return {
 		type: TYPES.GET_ACCOUNT_END,
-		account_id,
+		payload: account_id,
 	};
 };
 

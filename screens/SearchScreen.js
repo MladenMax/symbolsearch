@@ -29,7 +29,7 @@ class SearchScreen extends Component {
 		};
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.props.getSymbols();
 	}
 

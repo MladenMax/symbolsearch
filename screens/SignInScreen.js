@@ -7,10 +7,6 @@ import SignInForm from '../components/SignInForm';
 import { styles } from '../styles/SignInScreen';
 
 class SignInScreen extends Component {
-	static navigationOptions = {
-		header: null,
-	};
-
 	componentWillReceiveProps(nextProps) {
 		nextProps.authenticated && this.props.navigation.navigate('Tabs');
 	}

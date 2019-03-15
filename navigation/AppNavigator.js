@@ -10,7 +10,10 @@ import MainNavigator from './MainNavigator';
 export default createAppContainer(
 	createSwitchNavigator(
 		{
-			SignIn: createStackNavigator({ SignIn: SignInScreen }),
+			SignIn: createStackNavigator(
+				{ SignIn: SignInScreen },
+				{ header: null, headerMode: 'none' }
+			),
 			Main: MainNavigator,
 		},
 		{

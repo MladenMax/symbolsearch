@@ -39,6 +39,13 @@ class SearchScreen extends Component {
 		}
 	}
 
+	shouldComponentUpdate(nextProps) {
+		if (nextProps.watchlist) {
+			return true;
+		}
+		return false;
+	}
+
 	filterList = (list, query) => {
 		return list.filter(item => item.name.startsWith(query));
 	};

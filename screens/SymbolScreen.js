@@ -9,6 +9,7 @@ import moment from 'moment';
 
 import { getNews, closeSymbol } from '../redux/symbol/actions.js';
 
+import { colors } from '../consts/colors';
 import { styles } from '../styles/SymbolScreen';
 
 class SymbolScreen extends Component {
@@ -60,7 +61,7 @@ class SymbolScreen extends Component {
 				<LineChart
 					style={styles.chart}
 					data={this.getChartData(charts)}
-					svg={{ stroke: 'rgb(0, 150, 136)' }}
+					svg={{ stroke: colors.stroke }}
 					contentInset={{ top: 20, bottom: 20 }}
 				/>
 			);

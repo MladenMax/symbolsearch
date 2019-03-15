@@ -5,4 +5,5 @@ export const colors = {
 	blured: theme.colors.disabled,
 	follow: 'red',
 	unfollow: '#999999',
+	stroke: 'rgb(0, 150, 136)',
 };

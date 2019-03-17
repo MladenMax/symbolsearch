@@ -2,24 +2,24 @@ import * as TYPES from './types';
 import { getItem, setItem } from '../../util/deviceStorage';
 import { get, post } from '../../lib/http';
 
-// ----- AUTH USER -----
+// ----- AUTH -----
 
 const authUserInit = () => {
 	return {
-		type: TYPES.AUTH_USER_INIT,
+		type: TYPES.AUTH_INIT,
 	};
 };
 
 const authUserError = error => {
 	return {
-		type: TYPES.AUTH_USER_ERROR,
+		type: TYPES.AUTH_ERROR,
 		payload: error,
 	};
 };
 
 const authUserEnd = access_token => {
 	return {
-		type: TYPES.AUTH_USER_END,
+		type: TYPES.AUTH_END,
 		payload: access_token,
 	};
 };
@@ -44,24 +44,24 @@ export const authUser = (username, password) => {
 	};
 };
 
-// ----- GET USER -----
+// ----- USER -----
 
 const getUserInit = () => {
 	return {
-		type: TYPES.GET_USER_INIT,
+		type: TYPES.USER_INIT,
 	};
 };
 
 const getUserError = error => {
 	return {
-		type: TYPES.GET_USER_ERROR,
+		type: TYPES.USER_ERROR,
 		payload: error,
 	};
 };
 
 const getUserEnd = user_id => {
 	return {
-		type: TYPES.GET_USER_END,
+		type: TYPES.USER_END,
 		payload: user_id,
 	};
 };
@@ -86,24 +86,24 @@ export const getUser = () => {
 	};
 };
 
-// ----- GET ACCOUNT -----
+// ----- ACCOUNT -----
 
 const getAccountInit = () => {
 	return {
-		type: TYPES.GET_ACCOUNT_INIT,
+		type: TYPES.ACCOUNT_INIT,
 	};
 };
 
 const getAccountError = error => {
 	return {
-		type: TYPES.GET_ACCOUNT_ERROR,
+		type: TYPES.ACCOUNT_ERROR,
 		payload: error,
 	};
 };
 
 const getAccountEnd = account_id => {
 	return {
-		type: TYPES.GET_ACCOUNT_END,
+		type: TYPES.ACCOUNT_END,
 		payload: account_id,
 	};
 };

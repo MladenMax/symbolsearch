@@ -25,13 +25,6 @@ const initAuth = state => {
 	return updateState(state, data);
 };
 
-const initInfo = state => {
-	const data = {
-		error: null,
-	};
-	return updateState(state, data);
-};
-
 const initError = (state, error) => {
 	const data = {
 		loading: false,
@@ -58,6 +51,7 @@ const endUser = (state, user_id) => {
 
 const endAccount = (state, account_id) => {
 	const data = {
+		loading: false,
 		error: null,
 		account_id,
 		authenticated: true,
@@ -67,22 +61,21 @@ const endAccount = (state, account_id) => {
 
 export const authReducer = (state = INITIAL_STATE, { type, payload }) => {
 	switch (type) {
-		case TYPES.AUTH_USER_INIT:
+		case TYPES.AUTH_INIT:
+		case TYPES.USER_INIT:
+		case TYPES.ACCOUNT_INIT:
 			return initAuth(state);
-		case TYPES.GET_USER_INIT:
-		case TYPES.GET_ACCOUNT_INIT:
-			return initInfo(state);
 
-		case TYPES.AUTH_USER_ERROR:
-		case TYPES.GET_USER_ERROR:
-		case TYPES.GET_ACCOUNT_ERROR:
+		case TYPES.AUTH_ERROR:
+		case TYPES.USER_ERROR:
+		case TYPES.ACCOUNT_ERROR:
 			return initError(state, payload);
 
-		case TYPES.AUTH_USER_END:
+		case TYPES.AUTH_END:
 			return endAuth(state, payload);
-		case TYPES.GET_USER_END:
+		case TYPES.USER_END:
 			return endUser(state, payload);
-		case TYPES.GET_ACCOUNT_END:
+		case TYPES.ACCOUNT_END:
 			return endAccount(state, payload);
 		default:
 			return state;

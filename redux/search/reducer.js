@@ -9,128 +9,77 @@ const INITIAL_STATE = {
 
 // ----- HELPER -----
 
-const updateSearch = (state, data) => {
+const updateState = (state, data) => {
 	return Object.assign({}, state, data);
 };
 
-// ----- GET SYMBOLS -----
+// ----- SEARCH -----
 
-const getSymbolsInit = state => {
+const initSearch = state => {
 	const data = {
 		loading: true,
 		error: null,
 	};
-	return updateSearch(state, data);
+	return updateState(state, data);
 };
 
-const getSymbolsError = (state, error) => {
+const initError = (state, error) => {
 	const data = {
 		loading: false,
 		error,
 	};
-	return updateSearch(state, data);
+	return updateState(state, data);
 };
 
-const getSymbolsEnd = (state, symbols) => {
+const endSymbols = (state, symbols) => {
 	const data = {
+		loading: false,
+		error: null,
 		symbols,
 	};
-	return updateSearch(state, data);
+	return updateState(state, data);
 };
 
-// ----- GET WATCHLIST -----
-
-const getWatchlistInit = state => {
+const endWatchlist = (state, watchlist) => {
 	const data = {
+		loading: false,
 		error: null,
-	};
-	return updateSearch(state, data);
-};
-
-const getWatchlistError = (state, error) => {
-	const data = {
-		loading: false,
-		error,
-	};
-	return updateSearch(state, data);
-};
-
-const getWatchlistEnd = (state, watchlist) => {
-	const data = {
-		loading: false,
 		watchlist,
 	};
-	return updateSearch(state, data);
+	return updateState(state, data);
 };
 
-// ----- UPDATE WATCHLIST -----
-
-const updateWatchlistInit = state => {
+const endUpdate = (state, symbol, following) => {
 	const data = {
-		loading: true,
-		error: null,
-	};
-	return updateSearch(state, data);
-};
-
-const updateWatchlistError = (state, error) => {
-	const data = {
-		loading: false,
-		error,
-	};
-	return updateSearch(state, data);
-};
-
-const updateWatchlistEnd = (state, symbol, following) => {
-	const data = {
-		loading: false,
 		watchlist: following
 			? [...state.watchlist, symbol]
 			: state.watchlist.filter(item => {
 					return item.id !== symbol.id;
 			  }),
 	};
-	return updateSearch(state, data);
+	return updateState(state, data);
 };
 
-// ----- SEARCH REDUCER -----
+export const searchReducer = (state = INITIAL_STATE, { type, payload }) => {
+	switch (type) {
+		case TYPES.SYMBOLS_INIT:
+		case TYPES.WATCHLIST_INIT:
+		case TYPES.UPDATE_INIT:
+			return initSearch(state);
 
-export const searchReducer = (state = INITIAL_STATE, action) => {
-	if (action.type === TYPES.GET_SYMBOLS_INIT) {
-		return getSymbolsInit(state);
+		case TYPES.SYMBOLS_ERROR:
+		case TYPES.WATCHLIST_ERROR:
+		case TYPES.UPDATE_ERROR:
+			return initError(state, payload);
+
+		case TYPES.SYMBOLS_END:
+			return endSymbols(state, payload);
+		case TYPES.WATCHLIST_END:
+			return endWatchlist(state, payload);
+		case TYPES.UPDATE_END:
+			return endUpdate(state, payload.symbol, payload.following);
+
+		default:
+			return state;
 	}
-
-	if (action.type === TYPES.GET_SYMBOLS_ERROR) {
-		return getSymbolsError(state, action.error);
-	}
-
-	if (action.type === TYPES.GET_SYMBOLS_END) {
-		return getSymbolsEnd(state, action.symbols);
-	}
-
-	if (action.type === TYPES.GET_WATCHLIST_INIT) {
-		return getWatchlistInit(state);
-	}
-
-	if (action.type === TYPES.GET_WATCHLIST_ERROR) {
-		return getWatchlistError(state, action.error);
-	}
-
-	if (action.type === TYPES.GET_WATCHLIST_END) {
-		return getWatchlistEnd(state, action.watchlist);
-	}
-
-	if (action.type === TYPES.UPDATE_WATCHLIST_INIT) {
-		return updateWatchlistInit(state);
-	}
-
-	if (action.type === TYPES.UPDATE_WATCHLIST_ERROR) {
-		return updateWatchlistError(state, action.error);
-	}
-
-	if (action.type === TYPES.UPDATE_WATCHLIST_END) {
-		return updateWatchlistEnd(state, action.symbol, action.following);
-	}
-
-	return state;
 };

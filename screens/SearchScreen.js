@@ -47,7 +47,7 @@ class SearchScreen extends Component {
 	}
 
 	filterList = (list, query) => {
-		return list.filter(item => item.name.startsWith(query));
+		return list.filter(item => item.displayName.startsWith(query));
 	};
 
 	onChange = query => {
@@ -92,7 +92,7 @@ class SearchScreen extends Component {
 
 	renderRows = (symbols, watchlist) => {
 		return symbols.map(symbol => {
-			const { id, name, price } = symbol;
+			const { id, displayName, price } = symbol;
 			const average = (price.bid + price.ask) / 2;
 			const following = !!watchlist.find(symbol => {
 				return symbol.id === id;
@@ -100,10 +100,10 @@ class SearchScreen extends Component {
 			return (
 				<DataRow
 					key={id}
-					name={name}
+					name={displayName}
 					value={average}
 					following={following}
-					followSymbol={() => this.followSymbol(id, name)}
+					followSymbol={() => this.followSymbol(id, displayName)}
 					openSymbol={() => this.openSymbol(id)}
 				/>
 			);

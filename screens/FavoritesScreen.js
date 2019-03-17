@@ -46,15 +46,15 @@ class FavoritesScreen extends Component {
 
 	renderRows = watchlist => {
 		return watchlist.map(symbol => {
-			const { id, name, price } = symbol;
+			const { id, displayName, price } = symbol;
 			const average = (price.bid + price.ask) / 2;
 			return (
 				<DataRow
 					key={id}
-					name={name}
+					name={displayName}
 					value={average}
 					following={true}
-					followSymbol={() => this.unfollowSymbol(id, name)}
+					followSymbol={() => this.unfollowSymbol(id, displayName)}
 					openSymbol={() => this.openSymbol(id)}
 				/>
 			);

@@ -11,7 +11,7 @@ const INITIAL_STATE = {
 
 // ----- HELPER -----
 
-const changeState = (state, data) => {
+const updateState = (state, data) => {
 	return Object.assign({}, state, data);
 };
 
@@ -22,14 +22,14 @@ const initAuth = state => {
 		loading: true,
 		error: null,
 	};
-	return changeState(state, data);
+	return updateState(state, data);
 };
 
 const initInfo = state => {
 	const data = {
 		error: null,
 	};
-	return changeState(state, data);
+	return updateState(state, data);
 };
 
 const initError = (state, error) => {
@@ -37,7 +37,7 @@ const initError = (state, error) => {
 		loading: false,
 		error,
 	};
-	return changeState(state, data);
+	return updateState(state, data);
 };
 
 const endAuth = (state, access_token) => {
@@ -45,7 +45,7 @@ const endAuth = (state, access_token) => {
 		error: null,
 		access_token,
 	};
-	return changeState(state, data);
+	return updateState(state, data);
 };
 
 const endUser = (state, user_id) => {
@@ -53,7 +53,7 @@ const endUser = (state, user_id) => {
 		error: null,
 		user_id,
 	};
-	return changeState(state, data);
+	return updateState(state, data);
 };
 
 const endAccount = (state, account_id) => {
@@ -62,7 +62,7 @@ const endAccount = (state, account_id) => {
 		account_id,
 		authenticated: true,
 	};
-	return changeState(state, data);
+	return updateState(state, data);
 };
 
 export const authReducer = (state = INITIAL_STATE, { type, payload }) => {
